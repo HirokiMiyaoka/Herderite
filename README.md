@@ -1,2 +1,4 @@
 Herderite
 =========
+
+cpan Text::Markdown

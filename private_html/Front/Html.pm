@@ -34,7 +34,9 @@ sub out()
 	<script></script>
 </head>
 <body>
+<article>
 ' . $content{ html } . '
+</article>
 </body>
 </html>';
 }
