@@ -9,6 +9,10 @@ sub new
 {
 	my ( $package, $param ) = @_;
 
+	$param->{ TITLE } = '';
+	$param->{ CSS } = '';
+	$param->{ JS } = '';
+
 	return bless ( { param => $param }, $package );
 }
 
@@ -22,7 +26,7 @@ sub getdecode
 	unless ( $self->{ get }{ b } ){ $self->{ get }{ b } = ''; }
 }
 
-sub CommonDecode( \$ )
+sub CommonDecode
 {
 	my ( $query ) = ( @_ );
 	my @args = split( /&/, $query );
@@ -51,7 +55,7 @@ sub CommonDecode( \$ )
 	return \%ret;
 }
 
-sub out()
+sub out
 {
 	my ( $self ) = ( @_ );
 
@@ -70,11 +74,18 @@ sub out()
 		$file = $self->{ param }{ DIR } . '/' . $file . '.md';
 		unless ( -r $file ){ $file = ''; }
 	}
-
 	$self->{ param }{ file } = $file;
 
 	my $html = new Html( $self->{ param }, $self->{ get } );
-	my $out = $html->out();
+	my $out;
+
+	if ( $file ne '' )
+	{
+		$out = $html->out();
+	} else
+	{
+		$out = $html->error( 404 );
+	}
 
 	push( @{ $self->{ param }{ HTTP } }, "Content-Length: " . length( $out ) . "\n" );
 

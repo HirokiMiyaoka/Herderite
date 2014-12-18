@@ -12,7 +12,7 @@ sub new
 	return bless ( { param => $param }, $package );
 }
 
-sub out()
+sub out
 {
 	my ( $self, $file ) = ( @_ );
 
@@ -25,8 +25,9 @@ sub out()
 		$md .= join( '', <MD> );
 		close( MD );
 	}
-
-	return { title => $title, html => &markdown( $md ) };
+	$self->{ param }{ TITLE } = $title;
+	my $html = &markdown( $md );
+	return \$html;
 }
 
 1;
