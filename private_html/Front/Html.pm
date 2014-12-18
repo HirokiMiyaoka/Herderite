@@ -8,17 +8,17 @@ use Front::Markdown;
 
 sub new
 {
-	my ( $package ) = @_;
+	my ( $package, $param, $get ) = @_;
 
-	return bless ( {}, $package );
+	return bless ( { param => $param, get => $get }, $package );
 }
 
 sub out()
 {
 	my ( $self ) = ( @_ );
 
-	my $md = new Markdown();
-	my %content = %{ $md->out() };
+	my $md = new Markdown( $self->{ param } );
+	my %content = %{ $md->out( $self->{ param }{ file } ) };
 
 	return '<!DOCTYPE html>
 <html lang="ja">

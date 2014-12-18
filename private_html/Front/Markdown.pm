@@ -1,12 +1,15 @@
 package Markdown;
 
+use strict;
+use warnings;
+
 use Text::Markdown 'markdown';
 
 sub new
 {
-	my ( $package ) = @_;
+	my ( $package, $param ) = @_;
 
-	return bless ( {}, $package );
+	return bless ( { param => $param }, $package );
 }
 
 sub out()
@@ -14,11 +17,12 @@ sub out()
 	my ( $self, $file ) = ( @_ );
 
 	my $md = '';
-	my $title = '';
-	if ( open( MD, $file ) )
+	my $title = "";
+	if ( open( MD, "< $file" ) )
 	{
-		$tite = <MD>;
-		$md = join('',<MD>);
+		$title = $md = <MD>;
+		$title =~ s/^\# //;
+		$md .= join( '', <MD> );
 		close( MD );
 	}
 

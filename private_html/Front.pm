@@ -17,6 +17,9 @@ sub getdecode
 	my ( $self ) = ( @_ );
 
 	$self->{ get } = &CommonDecode( exists ( $ENV{ 'QUERY_STRING' } ) ? $ENV{ 'QUERY_STRING' } : '' );
+
+	unless ( $self->{ get }{ f } ){ $self->{ get }{ f } = ''; }
+	unless ( $self->{ get }{ b } ){ $self->{ get }{ b } = ''; }
 }
 
 sub CommonDecode( \$ )
@@ -52,12 +55,30 @@ sub out()
 {
 	my ( $self ) = ( @_ );
 
-	my $html = new Html();
+	my $file = $self->{ get }{ f };
+
+	if ( $self->{ get }{ b } =~ /([0-9]{4})([0-9]{42})([0-9]{42})/ )
+	{
+		$file = join( '/', $self->{ param }{ BLOG }, $1, $2, $3 );
+	} elsif ( $file =~ /\.\./ )
+	{
+		$file = '';
+	}
+
+	if ( $file ne '' )
+	{
+		$file = $self->{ param }{ DIR } . '/' . $file . '.md';
+		unless ( -r $file ){ $file = ''; }
+	}
+
+	$self->{ param }{ file } = $file;
+
+	my $html = new Html( $self->{ param }, $self->{ get } );
 	my $out = $html->out();
 
-	push( @{$self->{param}{HTTP}}, "Content-Length: " . length( $out ) . "\n" );
+	push( @{ $self->{ param }{ HTTP } }, "Content-Length: " . length( $out ) . "\n" );
 
-	print @{$self->{param}{HTTP}};
+	print @{ $self->{ param }{ HTTP } };
 	print "\n";
 	print $out;
 }
