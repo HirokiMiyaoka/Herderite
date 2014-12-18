@@ -9,7 +9,7 @@ use Front;
 
 &Main();
 
-sub Main()
+sub Main
 {
 	my $front = new Front( &conf::param( {} ) );
 
