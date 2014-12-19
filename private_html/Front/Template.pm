@@ -21,13 +21,19 @@ sub footer
 
 sub headmenu
 {
-	return '			<div></div>
+	return '			<div id="head"></div>
+';
+}
+
+sub footmenu
+{
+	return '			<div id="foot"></div>
 ';
 }
 
 sub sidemenu
 {
-	return '			<div></div>';
+	return '			<div id="side"></div>';
 }
 
 sub head
@@ -59,7 +65,8 @@ sub head
 sub foot
 {
 	my ( $self ) = ( @_ );
-	return $self->sidemenu() . '
+
+	return $self->footmenu() . $self->sidemenu() . '
 		</article>
 		<footer>
 ' . $self->footer() . '

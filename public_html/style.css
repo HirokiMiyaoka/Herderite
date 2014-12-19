@@ -30,11 +30,15 @@ article {
 	background-color: #efefef;
 }
 
-article div:first-child {
+article div#head {
 	height: 20px;
 }
 
-article div:last-child {
+article div#foot {
+	height: 20px;
+}
+
+article div#side {
 	position: absolute;
 	top: 0px;
 	right: 0px;

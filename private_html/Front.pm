@@ -14,13 +14,14 @@ sub new
 
 sub getdevice
 {
+	my $ua = $ENV{ 'HTTP_USER_AGENT' } || '';
 }
 
 sub getdecode
 {
 	my ( $self ) = ( @_ );
 
-	$self->{ get } = &CommonDecode( exists ( $ENV{ 'QUERY_STRING' } ) ? $ENV{ 'QUERY_STRING' } : '' );
+	$self->{ get } = &CommonDecode( $ENV{ 'QUERY_STRING' } || '' );
 
 	unless ( exists( $self->{ get }{ f } ) ){ $self->{ get }{ f } = ''; }
 	unless ( exists( $self->{ get }{ b } ) ){ $self->{ get }{ b } = ''; }
