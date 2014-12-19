@@ -1,8 +1,12 @@
 package conf;
 sub param{return {
 DL	=> 1,
-DIR	=> '.',
+TITLE=>'Herderite',
+CSS	=> '',
+JS	=> '',
 HOME=> '',
+DEF	=> 'index',
+DIR	=> '.',
 BLOG=> 'blog',
 HTTP=> ["Content-Type: text/html\n"],
 %{$_[0]}};}

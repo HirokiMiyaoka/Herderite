@@ -21,11 +21,14 @@ sub out
 	if ( open( MD, "< $file" ) )
 	{
 		$title = $md = <MD>;
-		$title =~ s/^\# //;
+		$title =~ s/^\#+ //;
+		$title =~ s/[\r\n]//g;
+		#$title =~ s/([^\\s]+)/$1/;
+		if ( $title ne '' ){ $title .= ' - '; }
 		$md .= join( '', <MD> );
 		close( MD );
 	}
-	$self->{ param }{ TITLE } = $title;
+	$self->{ param }{ TITLE } = $title . $self->{ param }{ TITLE };
 	my $html = &markdown( $md );
 	return \$html;
 }

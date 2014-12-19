@@ -9,10 +9,6 @@ sub new
 {
 	my ( $package, $param ) = @_;
 
-	$param->{ TITLE } = '';
-	$param->{ CSS } = '';
-	$param->{ JS } = '';
-
 	return bless ( { param => $param }, $package );
 }
 
@@ -67,6 +63,9 @@ sub out
 	} elsif ( $file =~ /\.\./ )
 	{
 		$file = '';
+	} elsif ( $file eq '' )
+	{
+		$file = 'index';
 	}
 
 	if ( $file ne '' )

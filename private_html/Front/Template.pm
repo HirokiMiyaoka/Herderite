@@ -26,14 +26,16 @@ sub header
 	<script>' . $self->{ param }{ JS } . '</script>
 </head>
 <body>
-<article>
+	<header></header>
+	<article>
 ';
 }
 
 sub footer
 {
 	return '
-</article>
+	</article>
+	<footer></footer>
 </body>
 </html>';
 }
