@@ -19,7 +19,7 @@ sub error
 	my ( $self, $code ) = ( @_ );
 	$self->{ param }{ TITLE } = 'Error - ' . $code;
 	my $tmplate = new Template( $self->{ param } );
-	return $tmplate->header() . $code . $tmplate->footer();
+	return $tmplate->head() . $code . $tmplate->foot();
 }
 
 sub out
@@ -31,7 +31,7 @@ sub out
 
 	my $tmplate = new Template( $self->{ param } );
 
-	return $tmplate->header() . $content . $tmplate->footer();
+	return $tmplate->head() . $content . $tmplate->foot();
 }
 
 1;

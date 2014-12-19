@@ -65,7 +65,7 @@ sub out
 		$file = '';
 	} elsif ( $file eq '' )
 	{
-		$file = 'index';
+		$file = $self->{ param }{ DEF };
 	}
 
 	if ( $file ne '' )

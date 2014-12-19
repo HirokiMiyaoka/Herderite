@@ -11,6 +11,21 @@ sub new
 
 sub header
 {
+	return '';
+}
+
+sub footer
+{
+	return '';
+}
+
+sub sidemenu
+{
+	return '';
+}
+
+sub head
+{
 	my ( $self ) = ( @_ );
 
 	return '<!DOCTYPE html>
@@ -21,21 +36,32 @@ sub header
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<link rel="shortcut icon" href="favicon.ico" type="image/vnd.microsoft.ico"/>
 	<link rel="stylesheet" href="./style.css" type="text/css" />
+	<link rel="stylesheet" href="./mdstyle.css" type="text/css" />
 	<title>' . $self->{ param }{ TITLE } . '</title>
 	<style>' . $self->{ param }{ CSS } . '</style>
 	<script>' . $self->{ param }{ JS } . '</script>
 </head>
 <body>
-	<header></header>
-	<article>
+	<div>
+		<header>
+' . $self->header() . '
+		</header>
+		<article>
 ';
 }
 
-sub footer
+sub foot
 {
+	my ( $self ) = ( @_ );
 	return '
-	</article>
-	<footer></footer>
+		</article>
+		<div>
+' . $self->sidemenu() . '
+		</div>
+		<footer>
+' . $self->footer() . '
+		</footer>
+	</div>
 </body>
 </html>';
 }
