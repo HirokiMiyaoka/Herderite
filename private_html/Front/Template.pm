@@ -19,9 +19,15 @@ sub footer
 	return '';
 }
 
+sub headmenu
+{
+	return '			<div></div>
+';
+}
+
 sub sidemenu
 {
-	return '';
+	return '			<div></div>';
 }
 
 sub head
@@ -47,17 +53,14 @@ sub head
 ' . $self->header() . '
 		</header>
 		<article>
-';
+' . $self->headmenu();
 }
 
 sub foot
 {
 	my ( $self ) = ( @_ );
-	return '
+	return $self->sidemenu() . '
 		</article>
-		<div>
-' . $self->sidemenu() . '
-		</div>
 		<footer>
 ' . $self->footer() . '
 		</footer>

@@ -12,14 +12,26 @@ sub new
 	return bless ( { param => $param }, $package );
 }
 
+sub getdevice
+{
+}
+
 sub getdecode
 {
 	my ( $self ) = ( @_ );
 
 	$self->{ get } = &CommonDecode( exists ( $ENV{ 'QUERY_STRING' } ) ? $ENV{ 'QUERY_STRING' } : '' );
 
-	unless ( $self->{ get }{ f } ){ $self->{ get }{ f } = ''; }
-	unless ( $self->{ get }{ b } ){ $self->{ get }{ b } = ''; }
+	unless ( exists( $self->{ get }{ f } ) ){ $self->{ get }{ f } = ''; }
+	unless ( exists( $self->{ get }{ b } ) ){ $self->{ get }{ b } = ''; }
+	if ( exists( $self->{ get }{ d } ) && $self->{ get }{ d } =~ /(pc|sp)/ ){ $self->{ param }{ DEV } = $1; }
+}
+
+sub init
+{
+	my ( $self ) = ( @_ );
+	$self->getdevice();
+	$self->getdecode();
 }
 
 sub CommonDecode

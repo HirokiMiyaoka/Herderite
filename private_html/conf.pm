@@ -9,5 +9,6 @@ DEF	=> 'index',
 DIR	=> '.',
 BLOG=> 'blog',
 HTTP=> ["Content-Type: text/html\n"],
+DEV	=> '',
 %{$_[0]}};}
 1;

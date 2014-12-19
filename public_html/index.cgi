@@ -13,7 +13,7 @@ sub Main
 {
 	my $front = new Front( &conf::param( {} ) );
 
-	$front->getdecode();
+	$front->init();
 
 	$front->out();
 }
