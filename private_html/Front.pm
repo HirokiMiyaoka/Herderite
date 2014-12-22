@@ -70,14 +70,37 @@ sub out
 
 	my $file = $self->{ get }{ f };
 
-	if ( $self->{ get }{ b } =~ /([0-9]{4})([0-9]{42})([0-9]{42})/ )
+	if ( $self->{ get }{ b } ne '' )
 	{
-		my ( $y, $m, $d ) = ( $1, $2, $3  );
-		$file = join( '/', $self->{ param }{ BLOG }, $y, $m, $d );
+		my ( $y, $m, $d ) = ( '0000', '00', '00' );
+		if ( $self->{ get }{ b } =~ /([0-9]{4})([0-9]{2})([0-9]{2})/ )
+		{
+			( $y, $m, $d ) = ( $1, $2, $3 );
+			$file = join( '/', $self->{ param }{ BLOG }, $y, $m, $d );
+		} elsif ( $self->{ get }{ b } =~ /([0-9]{4})([0-9]{2})/ )
+		{
+			( $y, $m ) = ( $1, $2 );
+			$file = join( '/', $self->{ param }{ BLOG }, $y, $m );
+		} elsif ( $self->{ get }{ b } =~ /([0-9]{4})/ )
+		{
+			$y = $1;
+			$file = join( '/', $self->{ param }{ BLOG }, $y );
+		} else
+		{
+			$file = $self->{ param }{ BLOG };
+		}
 		$self->{ param }{ D } = $d;
 		$self->{ param }{ M } = $m;
 		$self->{ param }{ Y } = $y;
-	} elsif ( $file =~ /\.\./ )
+	} else
+	{
+		my ( @time ) = localtime( time() );
+		$self->{ param }{ D } = '00';#sprintf( "%02d", $time[ 3 ] );
+		$self->{ param }{ M } = sprintf( "%02d", $time[ 4 ] + 1 );
+		$self->{ param }{ Y } = $time[ 5 ] + 1900;
+	}
+
+	if ( $file =~ /\.\./ )
 	{
 		$file = '';
 	} elsif ( $file eq '' )
@@ -85,18 +108,16 @@ sub out
 		$file = $self->{ param }{ DEF };
 	}
 
-	unless ( exists( $self->{ param }{ Y } ) )
-	{
-		my ( @time ) = localtime( time() );
-		$self->{ param }{ D } = sprintf( "%02d", $time[ 3 ] );
-		$self->{ param }{ M } = sprintf( "%02d", $time[ 4 ] + 1 );
-		$self->{ param }{ Y } = $time[ 5 ] + 1900;
-	}
-
 	if ( $file ne '' )
 	{
-		$file = $self->{ param }{ DIR } . '/' . $file . '.md';
-		unless ( -r $file ){ $file = ''; }
+		$file = $self->{ param }{ DIR } . '/' . $file;
+		if ( -r $file . '.md')
+		{
+			$file .= '.md';
+		} elsif ( !( -d $file ) )
+		{
+			$file = ''; 
+		}
 	}
 	$self->{ param }{ file } = $file;
 

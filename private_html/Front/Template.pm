@@ -28,7 +28,7 @@ sub breadcrumbs
 
 	my @list = split( /\//, $file );
 
-	if ( $list[ 0 ] eq '.' ){ shift( @list ); }
+	if ( 0 < scalar( @list ) && $list[ 0 ] eq '.' ){ shift( @list ); }
 	if ( 0 < scalar( @list ) )
 	{
 		$file = uri_escape_utf8( pop( @list ) );
@@ -80,7 +80,7 @@ sub head
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=640,user-scalable=yes" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<link rel="shortcut icon" href="favicon.ico" type="image/vnd.microsoft.ico"/>
+	<link rel="icon" href="favicon.ico" />
 	<link rel="stylesheet" href="./style.css" type="text/css" />
 	<link rel="stylesheet" href="./mdstyle.css" type="text/css" />
 	<title>' . $self->{ param }{ TITLE } . '</title>

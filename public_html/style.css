@@ -44,7 +44,6 @@ article {
 	float:left;
 	display: block;
 	width: 640px;
-	background-color: #efefef;
 }
 
 div#head {
@@ -59,7 +58,6 @@ div#side {
 	float:left;
 	width: 199px;
 	border-left: solid 1px #383749;
-	background-color: #efefef;
 }
 
 footer {
