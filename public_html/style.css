@@ -6,6 +6,7 @@ body {
 	height: 100%;
 	margin: 0px;
 	padding: 0px;
+	font-family: "Yu Gothic",YuGothic,Meiryo,sans-serif;
 }
 
 body > div {
@@ -52,4 +53,11 @@ footer {
 	width: 100%;
 	height: 30px;
 	background-color: #383749;
+	color: #d3dde8;
+	text-align: center;
+}
+
+footer a {
+	color: #d3dde8;
+	text-decoration: none;
 }

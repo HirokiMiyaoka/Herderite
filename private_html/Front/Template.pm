@@ -2,6 +2,7 @@ package Template;
 
 use strict;
 use warnings;
+use URI::Escape;
 
 sub new
 {
@@ -16,12 +17,43 @@ sub header
 
 sub footer
 {
-	return '';
+	return 'Powered by <a href="https://github.com/HirokiMiyaoka/Herderite" target="_blank" title="Herderite GithHub page.">Herderite</a> &copy; 2014 Hiroki';
+}
+
+sub breadcrumbs
+{
+	my ( $self, $file ) = ( @_ );
+	my $path = $self->{ param }{ HOME } . '?f=';
+
+	my @list = split( /\//, $file );
+
+	if ( $list[ 0 ] eq '.' ){ shift( @list ); }
+	if ( 0 < scalar( @list ) )
+	{
+		$file = uri_escape_utf8( pop( @list ) );
+		#$file =~ s/(\.[^\.]+)$//;
+	} else
+	{
+		$file = '';
+	}
+
+	foreach ( @list )
+	{
+		$path .= uri_escape_utf8( $_ ) . '%2f';
+		$_ = '<a href="' . $path . '">' . $_ . '</a>';
+	}
+
+	unshift( @list, '<a href="./' . $self->{ param }{ HOME } . '">Home</a>' );
+
+	if ( $file ne '' ){ push( @list, $file ) }
+
+	return join( ' / ', @list );
 }
 
 sub headmenu
 {
-	return '			<div id="head"></div>
+	my ( $self ) = ( @_ );
+	return '			<div id="head">' . $self->breadcrumbs( $self->{ param }{ file } ) . '</div>
 ';
 }
 
