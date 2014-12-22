@@ -89,9 +89,7 @@ sub head
 </head>
 <body>
 	<div>
-		<header>
-' . $self->header() . '
-		</header>
+		<header>' . $self->header() . '</header>
 		<div>
 			<article>
 ' . $self->headmenu();
@@ -102,12 +100,10 @@ sub foot
 	my ( $self ) = ( @_ );
 
 	return $self->footmenu() .
-'			</article>' .
+		'			</article>' .
 		$self->sidemenu() . 
 		'		</div>
-		<footer>
-' . $self->footer() . '
-		</footer>
+		<footer>' . $self->footer() . '</footer>
 	</div>
 </body>
 </html>';
