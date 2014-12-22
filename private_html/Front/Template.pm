@@ -12,7 +12,8 @@ sub new
 
 sub header
 {
-	return '';
+	my ( $self ) = ( @_ );
+	return '<a href="' . $self->{ param }{ HOME } . '" id="logo" title="Home"></a>';
 }
 
 sub footer
@@ -43,7 +44,7 @@ sub breadcrumbs
 		$_ = '<a href="' . $path . '">' . $_ . '</a>';
 	}
 
-	unshift( @list, '<a href="./' . $self->{ param }{ HOME } . '">Home</a>' );
+	unshift( @list, '<a href="' . $self->{ param }{ HOME } . '">Home</a>' );
 
 	if ( $file ne '' ){ push( @list, $file ) }
 
