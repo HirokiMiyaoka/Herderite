@@ -72,13 +72,25 @@ sub out
 
 	if ( $self->{ get }{ b } =~ /([0-9]{4})([0-9]{42})([0-9]{42})/ )
 	{
-		$file = join( '/', $self->{ param }{ BLOG }, $1, $2, $3 );
+		my ( $y, $m, $d ) = ( $1, $2, $3  );
+		$file = join( '/', $self->{ param }{ BLOG }, $y, $m, $d );
+		$self->{ param }{ D } = $d;
+		$self->{ param }{ M } = $m;
+		$self->{ param }{ Y } = $y;
 	} elsif ( $file =~ /\.\./ )
 	{
 		$file = '';
 	} elsif ( $file eq '' )
 	{
 		$file = $self->{ param }{ DEF };
+	}
+
+	unless ( exists( $self->{ param }{ Y } ) )
+	{
+		my ( @time ) = localtime( time() );
+		$self->{ param }{ D } = sprintf( "%02d", $time[ 3 ] );
+		$self->{ param }{ M } = sprintf( "%02d", $time[ 4 ] + 1 );
+		$self->{ param }{ Y } = $time[ 5 ] + 1900;
 	}
 
 	if ( $file ne '' )

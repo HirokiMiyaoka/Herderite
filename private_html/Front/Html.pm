@@ -6,6 +6,7 @@ use warnings;
 use lib '..';
 use Front::Markdown;
 use Front::Template;
+use Front::Blog;
 
 sub new
 {
@@ -25,6 +26,8 @@ sub error
 sub out
 {
 	my ( $self ) = ( @_ );
+
+	$self->{ param }{ blog } = new Blog( $self->{ param } );
 
 	my $md = new Markdown( $self->{ param } );
 	my $content = ${ $md->out( $self->{ param }{ file } ) };

@@ -66,7 +66,8 @@ sub footmenu
 
 sub sidemenu
 {
-	return '			<div id="side"></div>';
+	my ( $self ) = ( @_ );
+	return '			<div id="side">' . $self->{ param }{ blog }->list( $self->{ param }{ Y }, $self->{ param }{ M }, $self->{ param }{ D } ) . '</div>';
 }
 
 sub head
@@ -91,7 +92,8 @@ sub head
 		<header>
 ' . $self->header() . '
 		</header>
-		<article>
+		<div>
+			<article>
 ' . $self->headmenu();
 }
 
@@ -99,8 +101,10 @@ sub foot
 {
 	my ( $self ) = ( @_ );
 
-	return $self->footmenu() . $self->sidemenu() . '
-		</article>
+	return $self->footmenu() .
+'			</article>' .
+		$self->sidemenu() . 
+		'		</div>
 		<footer>
 ' . $self->footer() . '
 		</footer>
