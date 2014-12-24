@@ -12,6 +12,8 @@ sub new
 	return bless ( { param => $param }, $package );
 }
 
+sub list{ return ''; }
+
 sub breadcrumbs
 {
 	my ( $self, $file ) = ( @_ );

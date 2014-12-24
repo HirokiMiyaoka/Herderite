@@ -143,7 +143,9 @@ sub out
 sub error
 {
 	my ( $self, $code ) = ( @_ );
-	$self->{ param }{ blog } = new Blog( $self->{ param } );
+
+	$self->{ param }{ blog } = $self->{ param }{ tool } = new Tool( $self->{ param } );
+
 	$self->{ param }{ TITLE } = 'Error - ' . $code;
 	my $tmplate = new Template( $self->{ param } );
 	return $tmplate->head() . $code . $tmplate->foot();
@@ -153,8 +155,8 @@ sub outhtml
 {
 	my ( $self ) = ( @_ );
 
-	$self->{ param }{ blog } = new Blog( $self->{ param } );
 	$self->{ param }{ tool } = new Tool( $self->{ param } );
+	$self->{ param }{ blog } = new Blog( $self->{ param } );
 
 	my $content = '';
 
