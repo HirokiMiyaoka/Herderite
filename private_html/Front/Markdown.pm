@@ -15,7 +15,7 @@ sub new
 sub out
 {
 	my ( $self, $file ) = ( @_ );
-
+	$file = $self->{ param }{ DIR } . '/' . $file;
 	my $md = '';
 	my $title = "";
 	if ( open( MD, "< $file" ) )

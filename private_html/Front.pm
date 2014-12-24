@@ -110,11 +110,10 @@ sub out
 
 	if ( $file ne '' )
 	{
-		$file = $self->{ param }{ DIR } . '/' . $file;
-		if ( -r $file . '.md')
+		if ( -r $self->{ param }{ DIR } . '/' . $file . '.md')
 		{
 			$file .= '.md';
-		} elsif ( !( -d $file ) )
+		} elsif ( !( -d $self->{ param }{ DIR } . '/' . $file ) )
 		{
 			$file = ''; 
 		}

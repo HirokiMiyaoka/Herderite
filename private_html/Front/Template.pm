@@ -24,13 +24,25 @@ sub footer
 sub breadcrumbs
 {
 	my ( $self, $file ) = ( @_ );
-	my $path = $self->{ param }{ HOME } . '?f=';
+	my $path = $self->{ param }{ HOME };
+
+	my $sp = '';
+	my $blog = '';
 
 	my @list = split( /\//, $file );
 
 	if ( 0 < scalar( @list ) && $list[ 0 ] eq '.' ){ shift( @list ); }
 	if ( 0 < scalar( @list ) )
 	{
+		if ( $list[ 0 ] eq $self->{ param }{ BLOG } )
+		{
+			$path .= '?b=';
+			$blog = shift( @list );
+		} else
+		{
+			$path .= '?f=';
+			$sp = '%2f';
+		}
 		$file = uri_escape_utf8( pop( @list ) );
 		#$file =~ s/(\.[^\.]+)$//;
 	} else
@@ -40,10 +52,14 @@ sub breadcrumbs
 
 	foreach ( @list )
 	{
-		$path .= uri_escape_utf8( $_ ) . '%2f';
+		$path .= uri_escape_utf8( $_ ) . $sp;
 		$_ = '<a href="' . $path . '">' . $_ . '</a>';
 	}
 
+	if ( $blog ne '' )
+	{
+		unshift( @list, '<a href="' . $self->{ param }{ HOME } . '?b=blog">Blog</a>' );
+	}
 	unshift( @list, '<a href="' . $self->{ param }{ HOME } . '">Home</a>' );
 
 	if ( $file ne '' ){ push( @list, $file ) }
