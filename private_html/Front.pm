@@ -3,7 +3,10 @@ package Front;
 use strict;
 use warnings;
 
-use Front::Html;
+use Front::Markdown;
+use Front::Template;
+use Front::Blog;
+use Front::Tool;
 
 sub new
 {
@@ -120,15 +123,14 @@ sub out
 	}
 	$self->{ param }{ file } = $file;
 
-	my $html = new Html( $self->{ param }, $self->{ get } );
 	my $out;
 
 	if ( $file ne '' )
 	{
-		$out = $html->out();
+		$out = $self->outhtml();
 	} else
 	{
-		$out = $html->error( 404 );
+		$out = $self->error( 404 );
 	}
 
 	push( @{ $self->{ param }{ HTTP } }, "Content-Length: " . length( $out ) . "\n" );
@@ -136,6 +138,35 @@ sub out
 	print @{ $self->{ param }{ HTTP } };
 	print "\n";
 	print $out;
+}
+
+sub error
+{
+	my ( $self, $code ) = ( @_ );
+	$self->{ param }{ blog } = new Blog( $self->{ param } );
+	$self->{ param }{ TITLE } = 'Error - ' . $code;
+	my $tmplate = new Template( $self->{ param } );
+	return $tmplate->head() . $code . $tmplate->foot();
+}
+
+sub outhtml
+{
+	my ( $self ) = ( @_ );
+
+	$self->{ param }{ blog } = new Blog( $self->{ param } );
+	$self->{ param }{ tool } = new Tool( $self->{ param } );
+
+	my $content = '';
+
+	if ( -f $self->{ param }{ file } )
+	{
+		my $md = new Markdown( $self->{ param } );
+		$content = ${ $md->out( $self->{ param }{ file } ) };
+	}
+
+	my $tmplate = new Template( $self->{ param } );
+
+	return $tmplate->head() . $content . $tmplate->foot();
 }
 
 1;
