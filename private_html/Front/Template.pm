@@ -101,7 +101,7 @@ sub foot
 
 	return $self->footmenu() .
 		'			</article>' .
-		$self->sidemenu() . 
+		$self->sidemenu() .
 		'		</div>
 		<footer>' . $self->footer() . '</footer>
 	</div>
