@@ -50,8 +50,8 @@ sub head
 	<meta name="viewport" content="width=640,user-scalable=yes" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<link rel="icon" href="favicon.ico" />
-	<link rel="stylesheet" href="./style.css" type="text/css" />
-	<link rel="stylesheet" href="./mdstyle.css" type="text/css" />
+	<link rel="stylesheet" href="' . $self->{ param }{ MAINCSS } . '" type="text/css" />
+	<link rel="stylesheet" href="' . $self->{ param }{ MDCSS } . '" type="text/css" />
 	<title>' . $self->{ param }{ TITLE } . '</title>
 	<style>' . $self->{ param }{ CSS } . '</style>
 	<script>' . $self->{ param }{ JS } . '</script>

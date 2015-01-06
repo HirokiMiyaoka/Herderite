@@ -33,4 +33,12 @@ sub out
 	return \$html;
 }
 
+sub outInMem
+{
+	my ( $self, $md ) = ( @_ );
+
+	my $html = &markdown( ${ $md } );
+	return \$html;
+}
+
 1;

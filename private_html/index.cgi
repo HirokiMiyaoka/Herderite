@@ -3,12 +3,19 @@
 use strict;
 use warnings;
 
-use Text::Markdown;
+use conf;
+use AdFront;
 
 &Main();
 
-sub Main()
+sub Main
 {
-	my %param = %{ &conf::param({DIR=>'../public_html'}) };
+	my $front = new AdFront( &conf::param( {} ) );
 
+	$front->init();
+
+	$front->{ param }{ MAINCSS } = $front->{ param }{ ADDRESS } . $front->{ param }{ MAINCSS };
+	$front->{ param }{ MDCSS } = $front->{ param }{ ADDRESS } . $front->{ param }{ MDCSS };
+
+	$front->out();
 }
