@@ -24,7 +24,18 @@ sub getdecode
 {
 	my ( $self ) = ( @_ );
 
-	$self->{ get } = &CommonDecode( $ENV{ 'QUERY_STRING' } || '' );
+	$self->{ get } = &CommonDecode( \($ENV{ 'QUERY_STRING' } || '') );
+
+	my $size = $ENV{ 'CONTENT_LENGTH' } || 0;
+	if ( $self->{ param }{ DATAMAX } <= 0 || $size <= $self->{ param }{ DATAMAX } )
+	{
+		my $data;
+		read( STDIN, $data, $size );
+		$self->{ post } = &CommonDecode( \$data );
+	} else
+	{
+		$self->{ post } = {};
+	}
 
 	unless ( exists( $self->{ get }{ f } ) ){ $self->{ get }{ f } = ''; }
 	unless ( exists( $self->{ get }{ b } ) ){ $self->{ get }{ b } = ''; }
@@ -41,7 +52,7 @@ sub init
 sub CommonDecode
 {
 	my ( $query ) = ( @_ );
-	my @args = split( /&/, $query );
+	my @args = split( /&/, ${ $query } );
 	my %ret;
 	foreach ( @args )
 	{

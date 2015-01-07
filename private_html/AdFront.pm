@@ -13,6 +13,15 @@ sub new
 	return bless ( { param => $param }, $package );
 }
 
+sub init()
+{
+	my ( $self ) = ( @_ );
+    $self->SUPER::init();
+	my $uri = $ENV{ 'REQUEST_URI' } || '';
+	$uri = ~ /([^\/]+)(?:\?.+)$/;
+	$self->{ param }{ script } = $1 || './';
+}
+
 sub error
 {
 	my ( $self, $code ) = ( @_ );
@@ -62,7 +71,7 @@ sub outhtml
 sub form()
 {
 	my ( $self, $md ) = ( @_ );
-	return '<textarea>' . ${ $md } . '</textarea>';
+	return '<form style="margin:0.5em 0px;" action="' . $self->{ param }{ script } . '" method="post"><textarea style="width:98%;height:200px;margin:10px auto;display:block;">' . ${ $md } . '</textarea><input type="submit" name="preview" value="Submit" /><input type="submit" name="preview" value="Preview" /></form><hr />';
 }
 
 1;

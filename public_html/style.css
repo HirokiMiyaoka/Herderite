@@ -74,3 +74,8 @@ footer a {
 	color: #d3dde8;
 	text-decoration: none;
 }
+
+hr{
+	border-width: 1px 0px 0px;
+	border-style: solid;
+}

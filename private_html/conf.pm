@@ -12,6 +12,7 @@ DEF     => 'index',
 DIR     => '../public_html',
 BLOG    => 'blog',
 HTTP    => ["Content-Type: text/html\n"],
+DATAMAX => 50000000,
 DEV     => '',
 %{$_[0]}};}
 1;
