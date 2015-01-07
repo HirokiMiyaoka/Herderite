@@ -3,6 +3,8 @@ package Front;
 use strict;
 use warnings;
 
+use URI::Escape;
+
 use Front::Markdown;
 use Front::Template;
 use Front::Blog;
@@ -78,10 +80,9 @@ sub CommonDecode
 	return \%ret;
 }
 
-sub out
+sub getfilename()
 {
 	my ( $self ) = ( @_ );
-
 	my $file = $self->{ get }{ f };
 
 	if ( $self->{ get }{ b } ne '' )
@@ -117,17 +118,61 @@ sub out
 	if ( $file =~ /\.\./ )
 	{
 		$file = '';
-	} elsif ( $file eq '' )
-	{
-		$file = $self->{ param }{ DEF };
 	}
+
+	return $file;
+}
+
+sub getdirpath()
+{
+	my ( $self, $dir ) = ( @_ );
+	$dir =~ s/\/{2,}/\//g;
+	unless ( $dir =~ /\/$/ ){ $dir .= '/';}
+	return $dir;
+}
+
+sub getparentdirpath()
+{
+	my ( $self, $dir ) = ( @_ );
+	$dir =~ /^(.+\/)(?:[^\/]+\/)$/;
+	return my $parent = $1 || '';
+}
+
+sub getdirlist()
+{
+	my ( $self, $dir ) = ( @_ );
+
+	my $basedir = $self->{ param }{ DIR } . '/' . $dir;
+	opendir( DIR, $basedir );
+	my @list = sort{ $a cmp $b }( readdir( DIR ) );
+	closedir( DIR );
+
+	while( scalar( @list ) )
+	{
+		if ( $list[ 0 ] =~ /^\./ ){ shift( @list ); next; }
+		last;
+	}
+
+	return \@list;
+}
+
+sub out
+{
+	my ( $self ) = ( @_ );
+
+	my $file = $self->getfilename() || $self->{ param }{ DEF };
+	my $dir = '';
 
 	if ( $file ne '' )
 	{
 		if ( -r $self->{ param }{ DIR } . '/' . $file . '.md')
 		{
 			$file .= '.md';
-		} elsif ( !( -d $self->{ param }{ DIR } . '/' . $file ) )
+		} elsif ( -d $self->{ param }{ DIR } . '/' . $file )
+		{
+			$dir = $file;
+			$file = '';
+		} else
 		{
 			$file = ''; 
 		}
@@ -139,6 +184,9 @@ sub out
 	if ( $file ne '' )
 	{
 		$out = $self->outhtml();
+	} elsif( $self->{ param }{ DIRLIST } && $dir ne '' )
+	{
+		$out = $self->dirlist( $dir );
 	} else
 	{
 		$out = $self->error( 404 );
@@ -160,6 +208,44 @@ sub error
 	$self->{ param }{ TITLE } = 'Error - ' . $code;
 	my $tmplate = new Template( $self->{ param } );
 	return $tmplate->head() . $code . $tmplate->foot();
+}
+
+sub dirlist
+{
+	my ( $self, $dir ) = ( @_ );
+
+	$self->{ param }{ tool } = new Tool( $self->{ param } );
+	$self->{ param }{ blog } = new Blog( $self->{ param } );
+
+	$dir = $self->getdirpath( $dir );
+
+	my $path = $self->{ param }{ HOME } . '?f=';
+	my $basedir = $self->{ param }{ DIR } . '/' . $dir;
+
+	my @list = @{ $self->getdirlist( $dir ) };
+
+	my $content = '<h1>' . $dir . '</h1>' . '<ul>';
+
+	my $parent = $self->getparentdirpath( $dir );
+	if ( $parent ne '' )
+	{
+		$content .= '<li><a href="' . $path . uri_escape_utf8( $parent ) . '">' . '..' . '</a></li>';
+	}
+
+	foreach( @list )
+	{
+		if ( -f $basedir . $_ && $_ =~ /(.+)\.md$/)
+		{
+			$_ = $1;
+		}
+		$content .= '<li><a href="' . $path .uri_escape_utf8( $dir . $_ ) . '">' . $_ . '</a></li>';
+	}
+
+	$content .= '</ul>';
+
+	my $tmplate = new Template( $self->{ param } );
+
+	return $tmplate->head() . $content . $tmplate->foot();
 }
 
 sub outhtml

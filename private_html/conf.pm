@@ -1,6 +1,7 @@
 package conf;
 sub param{return {
 DL      => 1,
+DIRLIST => 1,
 TITLE   =>'Herderite',
 CSS     => '',
 JS      => '',
