@@ -17,7 +17,7 @@ sub loadmarkdown()
 	my $title = '';
 	my $md = '';
 
-	if ( open( MD, "< " . $self->{ io }->{ param }{ DIR } . '/' . $file ) )
+	if ( open( MD, "< " . $self->{ io }->{ param }{ PUBDIR } . '/' . $file ) )
 	{
 		$title = $md = <MD>;
 		while( <MD> )
@@ -51,10 +51,10 @@ sub checkfiledir()
 	my $dir = '';
 	if ( $file ne '' )
 	{
-		if ( -r $self->{ io }->{ param }{ DIR } . '/' . $file . '.md')
+		if ( -r $self->{ io }->{ param }{ PUBDIR } . '/' . $file . '.md')
 		{
 			$file .= '.md';
-		} elsif ( -d $self->{ io }->{ param }{ DIR } . '/' . $file )
+		} elsif ( -d $self->{ io }->{ param }{ PUBDIR } . '/' . $file )
 		{
 			$dir = $file;
 			$file = '';
@@ -66,11 +66,25 @@ sub checkfiledir()
 	return ( $file, $dir );
 }
 
+sub getblogdir()
+{
+	my ( $self, $dir ) = ( @_, '' );
+	my @list;
+	opendir( DIR, $self->{ io }->{ param }{ PUBDIR } . '/' . $self->{ io }->{ param }{ BLOG }  . '/' . $dir );
+	foreach( readdir( DIR ) )
+	{
+		unless ( $_ =~ /^\./ ){ push( @list, $_ ); }
+	}
+	closedir( DIR );
+	@list = sort{ $a cmp $b }( @list );
+	return \@list;
+}
+
 sub getdirlist()
 {
 	my ( $self, $dir ) = ( @_ );
 
-	my $basedir = $self->{ io }->{ param }{ DIR } . '/' . $dir;
+	my $basedir = $self->{ io }->{ param }{ PUBDIR } . '/' . $dir;
 	opendir( DIR, $basedir );
 	my @list = readdir( DIR );
 	closedir( DIR );

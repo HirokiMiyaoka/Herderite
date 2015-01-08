@@ -1,23 +1,12 @@
 package Blog;
 
+use strict;
+use warnings;
+
 sub new
 {
-	my ( $package, $param ) = ( @_ );
-	return bless ( { param => $param }, $package );
-}
-
-sub dirs()
-{
-	my ( $self, $dir ) = ( @_, '' );
-	my @list;
-	opendir( DIR, $self->{ param }{ DIR } . '/' . $self->{ param }{ BLOG }  . '/' . $dir );
-	foreach( readdir( DIR ) )
-	{
-		unless ( $_ =~ /^\./ ){ push( @list, $_ ); }
-	}
-	closedir( DIR );
-	@list = sort{ $a cmp $b }( @list );
-	return \@list;
+	my ( $package, $param, $io ) = ( @_ );
+	return bless ( { param => $param, io => $io }, $package );
 }
 
 sub list
@@ -25,7 +14,7 @@ sub list
 	my ( $self, $y, $m, $d ) = ( @_ );
 
 	my $out = '';
-	my @y = reverse( @{ $self->dirs() } );
+	my @y = reverse( @{ $self->{ io }->getblogdir() } );
 
 	$out = '<ul>';
 	foreach ( @y )
@@ -33,14 +22,14 @@ sub list
 		if ( $_ eq $y )
 		{
 			$out .= '<li>' . $_;
-			my @m = @{ $self->dirs( $y ) };
+			my @m = @{ $self->{ io }->getblogdir( $y ) };
 			$out .= '<ul>';
 			foreach ( @m )
 			{
 				if ( $_ eq $m )
 				{
 					$out .= '<li>' . $_;
-					my @d = @{ $self->dirs( $y . '/' . $m ) };
+					my @d = @{ $self->{ io }->getblogdir( $y . '/' . $m ) };
 					$out .= '<ul>';
 					foreach ( @d )
 					{
@@ -53,7 +42,7 @@ sub list
 							$out .= '<li><a href="' . $self->{ param }{ HOME } . '?b=' . $y . $m . $_ . '">' . $_ . '</a></li>';
 						}
 					}
-					$out . '</ul></li>';
+					$out .= '</ul></li>';
 				} else
 				{
 					$out .= '<li><a href="' . $self->{ param }{ HOME } . '?b=' . $y . $_ . '">' . $_ . '</a></li>';

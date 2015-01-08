@@ -149,6 +149,12 @@ sub getparentdirpath()
 	return $1 || '';
 }
 
+sub getblogdir()
+{
+	my ( $self, $dir ) = ( @_, '' );
+	return $self->{ filedir }->getblogdir( $dir );
+}
+
 sub getdirlist()
 {
 	my ( $self, $dir ) = ( @_ );

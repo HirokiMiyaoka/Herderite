@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 
+use lib '../herderite';
 use conf;
 use AdFront;
 

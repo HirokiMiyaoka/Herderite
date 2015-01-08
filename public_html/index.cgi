@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use lib "../private_html";
+use lib '../herderite';
 use conf;
 use Front;
 

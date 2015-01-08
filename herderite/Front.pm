@@ -24,6 +24,7 @@ sub init
 	$self->{ io } = new HerderiteIO( $self->{ param } );
 	$self->{ io }->getdevice();
 	$self->{ io }->decode();
+	$self->{ plugin } = { tool => new Tool( $self->{ param }, $self->{ io } ) };
 }
 
 sub out
@@ -38,13 +39,13 @@ sub out
 
 	if ( $file ne '' )
 	{
-		$out = $self->outhtml();
+		$out = ${ $self->outhtml() };
 	} elsif( $self->{ param }{ DIRLIST } && $dir ne '' )
 	{
-		$out = $self->dirlist( $dir );
+		$out = ${ $self->dirlist( $dir ) };
 	} else
 	{
-		$out = $self->error( 404 );
+		$out = ${ $self->error( 404 ) };
 	}
 
 	push( @{ $self->{ param }{ HTTP } }, "Content-Length: " . length( $out ) . "\n" );
@@ -58,24 +59,23 @@ sub error
 {
 	my ( $self, $code ) = ( @_ );
 
-	$self->{ param }{ blog } = $self->{ param }{ tool } = new Tool( $self->{ param } );
+	$self->{ plugin }{ blog } = $self->{ plugin }{ tool };
 
 	$self->{ param }{ TITLE } = 'Error - ' . $code;
-	my $tmplate = new Template( $self->{ param } );
-	return $tmplate->head() . $code . $tmplate->foot();
+	my $tmplate = new Template( $self->{ param }, $self->{ plugin } );
+	return \( $tmplate->head() . $code . $tmplate->foot() );
 }
 
 sub dirlist
 {
 	my ( $self, $dir ) = ( @_ );
 
-	$self->{ param }{ tool } = new Tool( $self->{ param } );
-	$self->{ param }{ blog } = new Blog( $self->{ param } );
+	$self->{ plugin }{ blog } = new Blog( $self->{ param }, $self->{ io } );
 
 	$dir = $self->{ io }->getdirpath( $dir );
 
 	my $path = $self->{ param }{ HOME } . '?f=';
-	my $basedir = $self->{ param }{ DIR } . '/' . $dir;
+	my $basedir = $self->{ param }{ PUBDIR } . '/' . $dir;
 
 	my @list = @{ $self->{ io }->getdirlist( $dir ) };
 
@@ -84,7 +84,7 @@ sub dirlist
 	my $parent = $self->{ io }->getparentdirpath( $dir );
 	if ( $parent ne '' || $dir ne './' )
 	{
-		$content .= '<li><a href="' . $path . uri_escape_utf8( $parent ) . '">' . '..' . '</a></li>';
+		$content .= '<li><a href="' . $path . uri_escape_utf8( $parent ) . '">' . '../' . '</a></li>';
 	}
 
 	foreach( @list )
@@ -98,17 +98,16 @@ sub dirlist
 
 	$content .= '</ul>';
 
-	my $tmplate = new Template( $self->{ param } );
+	my $tmplate = new Template( $self->{ param }, $self->{ plugin } );
 
-	return $tmplate->head() . $content . $tmplate->foot();
+	return \( $tmplate->head() . $content . $tmplate->foot() );
 }
 
 sub outhtml
 {
 	my ( $self ) = ( @_ );
 
-	$self->{ param }{ tool } = new Tool( $self->{ param } );
-	$self->{ param }{ blog } = new Blog( $self->{ param } );
+	$self->{ plugin }{ blog } = new Blog( $self->{ param }, $self->{ io } );
 
 	my $content = '';
 
@@ -118,9 +117,9 @@ sub outhtml
 		$content = ${ $md->out( $self->{ param }{ file } ) };
 	}
 
-	my $tmplate = new Template( $self->{ param } );
+	my $tmplate = new Template( $self->{ param }, $self->{ plugin } );
 
-	return $tmplate->head() . $content . $tmplate->foot();
+	return \( $tmplate->head() . $content . $tmplate->foot() );
 }
 
 1;

@@ -5,8 +5,8 @@ use warnings;
 
 sub new
 {
-	my ( $package, $param ) = ( @_ );
-	return bless ( { param => $param }, $package );
+	my ( $package, $param, $plugin ) = ( @_ );
+	return bless ( { param => $param, plugin => $plugin }, $package );
 }
 
 sub header
@@ -23,7 +23,7 @@ sub footer
 sub headmenu
 {
 	my ( $self ) = ( @_ );
-	return '			<div id="head">' . $self->{ param }{ tool }->breadcrumbs( $self->{ param }{ file } ) . '</div>
+	return '			<div id="head">' . $self->{ plugin }{ tool }->breadcrumbs( $self->{ param }{ file } ) . '</div>
 ';
 }
 
@@ -36,7 +36,7 @@ sub footmenu
 sub sidemenu
 {
 	my ( $self ) = ( @_ );
-	return '			<div id="side">' . $self->{ param }{ blog }->list( $self->{ param }{ Y }, $self->{ param }{ M }, $self->{ param }{ D } ) . '</div>';
+	return '			<div id="side">' . $self->{ plugin }{ blog }->list( $self->{ param }{ Y }, $self->{ param }{ M }, $self->{ param }{ D } ) . '</div>';
 }
 
 sub head

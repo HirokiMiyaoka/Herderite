@@ -22,7 +22,7 @@ sub init()
 	unless ( exists( $self->{ io }->{ post }{ text } ) ){ $self->{ io }->{ post }{ text } = ''; }
 
 	my $uri = $ENV{ 'REQUEST_URI' } || '';
-	$uri = ~ /([^\/]+)(?:\?.+)$/;
+	$uri =~ /([^\/]+)(?:\?.+)$/;
 	$self->{ param }{ script } = $1 || './';
 }
 
@@ -32,10 +32,10 @@ sub error
 
 	if ( $code != 404 )
 	{
-		$self->{ param }{ blog } = $self->{ param }{ tool } = new Tool( $self->{ param } );
+		$self->{ param }{ blog } = $self->{ plugin }{ tool };
 		$self->{ param }{ TITLE } = 'Error - ' . $code;
-		my $tmplate = new Template( $self->{ param } );
-		return $tmplate->head() . $code . $tmplate->foot();
+		my $tmplate = new Template( $self->{ param }, $self->{ plugin } );
+		return \( $tmplate->head() . $code . $tmplate->foot() );
 	}
 
 	$self->{ param }{ file } = $self->{ io }->{ get }{ f } . '.md';
@@ -46,8 +46,7 @@ sub outhtml
 {
 	my ( $self ) = ( @_ );
 
-	$self->{ param }{ tool } = new Tool( $self->{ param } );
-	$self->{ param }{ blog } = new Blog( $self->{ param } );
+	$self->{ plugin }{ blog } = new Blog( $self->{ param }, $self->{ io } );
 	my $md = new Markdown( $self->{ param }, $self->{ io } );
 
 	my $content = '';
@@ -58,7 +57,6 @@ sub outhtml
 	if ( $self->{ io }->{ post }{ text } ne '' )
 	{
 		( $title ) = split( /\n/, $self->{ io }->{ post }{ text }, 2 );
-	
 		$content = ${ $md->outInMem( \$self->{ io }->{ post }{ text } ) };
 	} else
 	{
@@ -73,15 +71,16 @@ sub outhtml
 
 	$self->{ param }{ TITLE } = $title . $self->{ param }{ TITLE };
 
-	my $tmplate = new Template( $self->{ param } );
+	my $tmplate = new Template( $self->{ param }, $self->{ plugin } );
 
-	return $tmplate->head() . $self->form( \($self->{ io }->{ post }{ text } || ${ $mdtxt } ) ) . $content . $tmplate->foot();
+	return \( $tmplate->head() . $self->form( \($self->{ io }->{ post }{ text } || ${ $mdtxt } ) ) . $content . $tmplate->foot() );
 }
 
 sub form()
 {
 	my ( $self, $md ) = ( @_ );
-	return '<form style="margin:0.5em 0px;" required="required" action="' . $self->{ param }{ script } . '?' . ( $ENV{ 'QUERY_STRING' } || '' ) .
+	return '<form style="margin:0.5em 0px;" required="required" action="' .
+	$self->{ param }{ script } . '?' . ( $ENV{ 'QUERY_STRING' } || '' ) .
 	'" method="post"><textarea style="width:98%;height:200px;margin:10px auto;display:block;" name="text" autofocus="autofocus">' . ${ $md } .
 	'</textarea>' .
 	'<input type="submit" name="preview" value="Preview" />' .
