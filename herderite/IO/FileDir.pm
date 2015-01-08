@@ -107,17 +107,17 @@ sub getdirlist()
 	{
 		$obj = shift( @list );
 		if ( $obj =~ /^\./ ){ next; }
-		if ( -f $basedir . $obj )
+		if ( -d $basedir . '/' . $obj )
+		{
+			push( @dir, $obj . '/' );
+		} else
 		{
 			if ( $obj =~ /(.+)\.md$/ ){ $obj = $1; }
 			push( @file, $obj );
-		} else
-		{
-			push( @dir, $obj . '/' );
 		}
 	}
 
-	return [ sort{ $a cmp $b }( @dir ), sort{ $a cmp $b }( @file ) ];
+	return [ ( sort{ $a cmp $b }( @dir ) ), ( sort{ $a cmp $b }( @file ) ) ];
 }
 
 1;

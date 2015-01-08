@@ -3,6 +3,8 @@ package AdFront;
 use strict;
 use warnings;
 
+use URI::Escape;
+
 use Front;
 our @ISA = qw( Front );
 
@@ -40,6 +42,56 @@ sub error
 
 	$self->{ param }{ file } = $self->{ io }->{ get }{ f } . '.md';
 	return $self->outhtml();
+}
+
+sub dirlist
+{
+	my ( $self, $dir ) = ( @_ );
+
+	$self->{ plugin }{ blog } = new Blog( $self->{ param }, $self->{ io } );
+
+	$dir = $self->{ io }->getdirpath( $dir );
+
+	my $path = $self->{ param }{ HOME } . '?f=';
+	my $basedir = $self->{ param }{ PUBDIR } . '/' . $dir;
+
+	if ( exists( $self->{ io }->{ post }{ d } ) && $self->{ io }->{ post }{ d } ne '' )
+	{
+		mkdir( $basedir . $self->{ io }->{ post }{ d }, 0705 );
+	}
+
+	my @list = @{ $self->{ io }->getdirlist( $dir ) };
+
+	my $content = '<ul>';
+
+	my $parent = $self->{ io }->getparentdirpath( $dir );
+	if ( $parent ne '' || $dir ne './' )
+	{
+		$content .= '<li><a href="' . $path . uri_escape_utf8( $parent ) . '">' . '../' . '</a></li>';
+	}
+
+	foreach( @list )
+	{
+		if ( -f $basedir . $_ && $_ =~ /(.+)\.md$/)
+		{
+			$_ = $1;
+		}
+		$content .= '<li><a href="' . $path .uri_escape_utf8( $dir . $_ ) . '">' . $_ . '</a></li>';
+	}
+
+	$content .= '</ul>';
+
+	my $tmplate = new Template( $self->{ param }, $self->{ plugin } );
+
+	return \( $tmplate->head() .
+	'<h1>' . $dir . '</h1>' .
+	'<form style="text-align:right;margin:5px;" action="' .
+	$self->{ param }{ script } . '?' . ( $ENV{ 'QUERY_STRING' } || '' ) .
+	'" method="post"><input type="text" name="d" /><input type="submit" value="Create dir" /></form>' .
+	'<form style="text-align:right;margin:5px;" action="' .
+	$self->{ param }{ script } . '?' . ( $ENV{ 'QUERY_STRING' } || '' ) .
+	'" method="get"><input type="text" name="f" /><input type="submit" value="Create page" /></form>' .
+	$content . $tmplate->foot() );
 }
 
 sub outhtml
