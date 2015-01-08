@@ -58,6 +58,12 @@ sub outhtml
 	{
 		( $title ) = split( /\n/, $self->{ io }->{ post }{ text }, 2 );
 		$content = ${ $md->outInMem( \$self->{ io }->{ post }{ text } ) };
+
+		if ( exists( $self->{ io }->{ post }{ post } ) )
+		{
+			$self->{ io }->savemarkdown( $self->{ param }{ file }, \$self->{ io }->{ post }{ text } )
+		}
+
 	} else
 	{
 		( $title, $mdtxt ) = $self->{ io }->loadmarkdown( $self->{ param }{ file } );

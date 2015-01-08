@@ -30,6 +30,17 @@ sub loadmarkdown()
 	return ( $title, \$md );
 }
 
+sub savemarkdown()
+{
+	my ( $self, $file, $md ) = ( @_ );
+
+	if ( open( MD, "> " . $self->{ io }->{ param }{ PUBDIR } . '/' . $file ) )
+	{
+		print MD ${ $md };
+		close( MD );
+	}
+}
+
 sub loadfile()
 {
 	my ( $self, $file ) = ( @_ );

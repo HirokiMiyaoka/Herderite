@@ -79,6 +79,12 @@ sub loadmarkdown()
 	return $self->{ filedir }->loadmarkdown( $file );
 }
 
+sub savemarkdown()
+{
+	my ( $self, $file, $md ) = ( @_ );
+	return $self->{ filedir }->savemarkdown( $file, $md );
+}
+
 sub loadfile()
 {
 	my ( $self, $file ) = ( @_ );
