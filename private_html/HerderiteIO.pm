@@ -16,6 +16,11 @@ sub new
 	return $obj;
 }
 
+sub getdevice
+{
+	return $ENV{ 'HTTP_USER_AGENT' } || '';
+}
+
 sub decode()
 {
 	my ( $self ) = ( @_ );
@@ -66,6 +71,70 @@ sub CommonDecode
 	}
 
 	return \%ret;
+}
+
+sub getfilename()
+{
+	my ( $self ) = ( @_ );
+	my $file = $self->{ get }{ f };
+
+	if ( $self->{ get }{ b } ne '' )
+	{
+		my ( $y, $m, $d ) = ( '0000', '00', '00' );
+		if ( $self->{ get }{ b } =~ /([0-9]{4})([0-9]{2})([0-9]{2})/ )
+		{
+			( $y, $m, $d ) = ( $1, $2, $3 );
+			$file = join( '/', $self->{ param }{ BLOG }, $y, $m, $d );
+		} elsif ( $self->{ io }->{ get }{ b } =~ /([0-9]{4})([0-9]{2})/ )
+		{
+			( $y, $m ) = ( $1, $2 );
+			$file = join( '/', $self->{ param }{ BLOG }, $y, $m );
+		} elsif ( $self->{ io }->{ get }{ b } =~ /([0-9]{4})/ )
+		{
+			$y = $1;
+			$file = join( '/', $self->{ param }{ BLOG }, $y );
+		} else
+		{
+			$file = $self->{ param }{ BLOG };
+		}
+		$self->{ param }{ D } = $d;
+		$self->{ param }{ M } = $m;
+		$self->{ param }{ Y } = $y;
+	} else
+	{
+		my ( @time ) = localtime( time() );
+		$self->{ param }{ D } = '00';#sprintf( "%02d", $time[ 3 ] );
+		$self->{ param }{ M } = sprintf( "%02d", $time[ 4 ] + 1 );
+		$self->{ param }{ Y } = $time[ 5 ] + 1900;
+	}
+
+	if ( $file =~ /\.\./ )
+	{
+		$file = '';
+	}
+
+	return $file;
+}
+
+sub getdirpath()
+{
+	my ( $self, $dir ) = ( @_ );
+	$dir =~ s/\/{2,}/\//g;
+	unless ( $dir =~ /\/$/ ){ $dir .= '/';}
+	return $dir;
+}
+
+sub getparentdirpath()
+{
+	my ( $self, $dir ) = ( @_ );
+	$dir =~ /^(.+\/)(?:[^\/]+\/)$/;
+	return $1 || '';
+}
+
+sub getdirlist()
+{
+	my ( $self, $dir ) = ( @_ );
+	return $self->{ filedir }->getdirlist( $dir );
 }
 
 1;

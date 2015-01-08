@@ -18,111 +18,19 @@ sub new
 	return bless ( { param => $param }, $package );
 }
 
-sub getdevice
-{
-	my $ua = $ENV{ 'HTTP_USER_AGENT' } || '';
-}
-
 sub init
 {
 	my ( $self ) = ( @_ );
 	$self->{ io } = new HerderiteIO( $self->{ param } );
-	$self->getdevice();
+	$self->{ io }->getdevice();
 	$self->{ io }->decode();
-}
-
-sub getfilename()
-{
-	my ( $self ) = ( @_ );
-	my $file = $self->{ io }->{ get }{ f };
-
-	if ( $self->{ io }->{ get }{ b } ne '' )
-	{
-		my ( $y, $m, $d ) = ( '0000', '00', '00' );
-		if ( $self->{ io }->{ get }{ b } =~ /([0-9]{4})([0-9]{2})([0-9]{2})/ )
-		{
-			( $y, $m, $d ) = ( $1, $2, $3 );
-			$file = join( '/', $self->{ param }{ BLOG }, $y, $m, $d );
-		} elsif ( $self->{ io }->{ get }{ b } =~ /([0-9]{4})([0-9]{2})/ )
-		{
-			( $y, $m ) = ( $1, $2 );
-			$file = join( '/', $self->{ param }{ BLOG }, $y, $m );
-		} elsif ( $self->{ io }->{ get }{ b } =~ /([0-9]{4})/ )
-		{
-			$y = $1;
-			$file = join( '/', $self->{ param }{ BLOG }, $y );
-		} else
-		{
-			$file = $self->{ param }{ BLOG };
-		}
-		$self->{ param }{ D } = $d;
-		$self->{ param }{ M } = $m;
-		$self->{ param }{ Y } = $y;
-	} else
-	{
-		my ( @time ) = localtime( time() );
-		$self->{ param }{ D } = '00';#sprintf( "%02d", $time[ 3 ] );
-		$self->{ param }{ M } = sprintf( "%02d", $time[ 4 ] + 1 );
-		$self->{ param }{ Y } = $time[ 5 ] + 1900;
-	}
-
-	if ( $file =~ /\.\./ )
-	{
-		$file = '';
-	}
-
-	return $file;
-}
-
-sub getdirpath()
-{
-	my ( $self, $dir ) = ( @_ );
-	$dir =~ s/\/{2,}/\//g;
-	unless ( $dir =~ /\/$/ ){ $dir .= '/';}
-	return $dir;
-}
-
-sub getparentdirpath()
-{
-	my ( $self, $dir ) = ( @_ );
-	$dir =~ /^(.+\/)(?:[^\/]+\/)$/;
-	return $1 || '';
-}
-
-sub getdirlist()
-{
-	my ( $self, $dir ) = ( @_ );
-
-	my $basedir = $self->{ param }{ DIR } . '/' . $dir;
-	opendir( DIR, $basedir );
-	my @list = readdir( DIR );
-	closedir( DIR );
-
-	my @dir;
-	my @file;
-	my $obj;
-	while( scalar( @list ) )
-	{
-		$obj = shift( @list );
-		if ( $obj =~ /^\./ ){ next; }
-		if ( -f $basedir . $obj )
-		{
-			if ( $obj =~ /(.+)\.md$/ ){ $obj = $1; }
-			push( @file, $obj );
-		} else
-		{
-			push( @dir, $obj . '/' );
-		}
-	}
-
-	return [ sort{ $a cmp $b }( @dir ), sort{ $a cmp $b }( @file ) ];
 }
 
 sub out
 {
 	my ( $self ) = ( @_ );
 
-	my $file = $self->getfilename() || $self->{ param }{ DEF };
+	my $file = $self->{ io }->getfilename() || $self->{ param }{ DEF };
 	my $dir = '';
 
 	if ( $file ne '' )
@@ -179,16 +87,16 @@ sub dirlist
 	$self->{ param }{ tool } = new Tool( $self->{ param } );
 	$self->{ param }{ blog } = new Blog( $self->{ param } );
 
-	$dir = $self->getdirpath( $dir );
+	$dir = $self->{ io }->getdirpath( $dir );
 
 	my $path = $self->{ param }{ HOME } . '?f=';
 	my $basedir = $self->{ param }{ DIR } . '/' . $dir;
 
-	my @list = @{ $self->getdirlist( $dir ) };
+	my @list = @{ $self->{ io }->getdirlist( $dir ) };
 
 	my $content = '<h1>' . $dir . '</h1>' . '<ul>';
 
-	my $parent = $self->getparentdirpath( $dir );
+	my $parent = $self->{ io }->getparentdirpath( $dir );
 	if ( $parent ne '' || $dir ne './' )
 	{
 		$content .= '<li><a href="' . $path . uri_escape_utf8( $parent ) . '">' . '..' . '</a></li>';
