@@ -30,23 +30,8 @@ sub out
 {
 	my ( $self ) = ( @_ );
 
-	my $file = $self->{ io }->getfilename() || $self->{ param }{ DEF };
-	my $dir = '';
+	my ( $file, $dir ) = $self->{ io }->checkfiledir( $self->{ io }->getfilename() );
 
-	if ( $file ne '' )
-	{
-		if ( -r $self->{ param }{ DIR } . '/' . $file . '.md')
-		{
-			$file .= '.md';
-		} elsif ( -d $self->{ param }{ DIR } . '/' . $file )
-		{
-			$dir = $file;
-			$file = '';
-		} else
-		{
-			$file = ''; 
-		}
-	}
 	$self->{ param }{ file } = $file;
 
 	my $out;
@@ -129,7 +114,7 @@ sub outhtml
 
 	if ( -f $self->{ param }{ file } )
 	{
-		my $md = new Markdown( $self->{ param } );
+		my $md = new Markdown( $self->{ param }, $self->{ io } );
 		$content = ${ $md->out( $self->{ param }{ file } ) };
 	}
 

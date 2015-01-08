@@ -7,29 +7,25 @@ use Text::Markdown 'markdown';
 
 sub new
 {
-	my ( $package, $param ) = @_;
+	my ( $package, $param, $io ) = @_;
 
-	return bless ( { param => $param }, $package );
+	return bless ( { param => $param, io => $io }, $package );
 }
 
 sub out
 {
 	my ( $self, $file ) = ( @_ );
-	$file = $self->{ param }{ DIR } . '/' . $file;
-	my $md = '';
-	my $title = "";
-	if ( open( MD, "< $file" ) )
-	{
-		$title = $md = <MD>;
-		$title =~ s/^\#+ //;
-		$title =~ s/[\r\n]//g;
-		#$title =~ s/([^\\s]+)/$1/;
-		if ( $title ne '' ){ $title .= ' - '; }
-		$md .= join( '', <MD> );
-		close( MD );
-	}
+
+	my ( $title, $md ) = $self->{ io }->loadmarkdown( $file );
+
+	$title =~ s/^\#+ //;
+	$title =~ s/[\r\n]//g;
+	#$title =~ s/([^\\s]+)/$1/;
+	if ( $title ne '' ){ $title .= ' - '; }
+
 	$self->{ param }{ TITLE } = $title . $self->{ param }{ TITLE };
-	my $html = &markdown( $md );
+	my $html = &markdown( ${ $md } );
+
 	return \$html;
 }
 

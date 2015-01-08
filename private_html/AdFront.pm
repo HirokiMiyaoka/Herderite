@@ -48,41 +48,34 @@ sub outhtml
 
 	$self->{ param }{ tool } = new Tool( $self->{ param } );
 	$self->{ param }{ blog } = new Blog( $self->{ param } );
-	my $md = new Markdown( $self->{ param } );
+	my $md = new Markdown( $self->{ param }, $self->{ io } );
 
 	my $content = '';
 
-	my $mdtxt = '';
+	my $mdtxt = \'';
 	my $title = "";
 
 	if ( $self->{ io }->{ post }{ text } ne '' )
 	{
 		( $title ) = split( /\n/, $self->{ io }->{ post }{ text }, 2 );
-		$title =~ s/^\#+ //;
-		$title =~ s/[\r\n]//g;
-		#$title =~ s/([^\\s]+)/$1/;
-		if ( $title ne '' ){ $title .= ' - '; }
+	
 		$content = ${ $md->outInMem( \$self->{ io }->{ post }{ text } ) };
 	} else
 	{
-		if ( open( MD, "< " . $self->{ param }{ DIR } . '/' . $self->{ param }{ file } ) )
-		{
-			$title = $mdtxt = <MD>;
-			$title =~ s/^\#+ //;
-			$title =~ s/[\r\n]//g;
-			#$title =~ s/([^\\s]+)/$1/;
-			if ( $title ne '' ){ $title .= ' - '; }
-			$mdtxt .= join( '', <MD> );
-			close( MD );
-		}
-		$content = ${ $md->outInMem( \$mdtxt ) };
+		( $title, $mdtxt ) = $self->{ io }->loadmarkdown( $self->{ param }{ file } );
+		$content = ${ $md->outInMem( $mdtxt ) };
 	}
+
+	$title =~ s/^\#+ //;
+	$title =~ s/[\r\n]//g;
+	#$title =~ s/([^\\s]+)/$1/;
+	if ( $title ne '' ){ $title .= ' - '; }
 
 	$self->{ param }{ TITLE } = $title . $self->{ param }{ TITLE };
 
 	my $tmplate = new Template( $self->{ param } );
 
-	return $tmplate->head() . $self->form( \($self->{ io }->{ post }{ text } || $mdtxt) ) . $content . $tmplate->foot();
+	return $tmplate->head() . $self->form( \($self->{ io }->{ post }{ text } || ${ $mdtxt } ) ) . $content . $tmplate->foot();
 }
 
 sub form()

@@ -73,6 +73,18 @@ sub CommonDecode
 	return \%ret;
 }
 
+sub loadmarkdown()
+{
+	my ( $self, $file ) = ( @_ );
+	return $self->{ filedir }->loadmarkdown( $file );
+}
+
+sub loadfile()
+{
+	my ( $self, $file ) = ( @_ );
+	return $self->{ filedir }->loadfile();
+}
+
 sub getfilename()
 {
 	my ( $self ) = ( @_ );
@@ -110,10 +122,16 @@ sub getfilename()
 
 	if ( $file =~ /\.\./ )
 	{
-		$file = '';
+		$file = $self->{ param }{ DEF };
 	}
 
-	return $file;
+	return $file || $self->{ param }{ DEF };
+}
+
+sub checkfiledir()
+{
+	my ( $self, $file ) = ( @_ );
+	return $self->{ filedir }->checkfiledir( $file );
 }
 
 sub getdirpath()
