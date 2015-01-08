@@ -5,6 +5,7 @@ use warnings;
 
 use URI::Escape;
 
+use HerderiteIO;
 use Front::Markdown;
 use Front::Template;
 use Front::Blog;
@@ -22,81 +23,31 @@ sub getdevice
 	my $ua = $ENV{ 'HTTP_USER_AGENT' } || '';
 }
 
-sub getdecode
-{
-	my ( $self ) = ( @_ );
-
-	$self->{ get } = &CommonDecode( \($ENV{ 'QUERY_STRING' } || '') );
-
-	my $size = $ENV{ 'CONTENT_LENGTH' } || 0;
-	if ( $self->{ param }{ DATAMAX } <= 0 || $size <= $self->{ param }{ DATAMAX } )
-	{
-		my $data;
-		read( STDIN, $data, $size );
-		$self->{ post } = &CommonDecode( \$data );
-	} else
-	{
-		$self->{ post } = {};
-	}
-
-	unless ( exists( $self->{ get }{ f } ) ){ $self->{ get }{ f } = ''; }
-	unless ( exists( $self->{ get }{ b } ) ){ $self->{ get }{ b } = ''; }
-	if ( exists( $self->{ get }{ d } ) && $self->{ get }{ d } =~ /(pc|sp)/ ){ $self->{ param }{ DEV } = $1; }
-}
-
 sub init
 {
 	my ( $self ) = ( @_ );
+	$self->{ io } = new HerderiteIO( $self->{ param } );
 	$self->getdevice();
-	$self->getdecode();
-}
-
-sub CommonDecode
-{
-	my ( $query ) = ( @_ );
-	my @args = split( /&/, ${ $query } );
-	my %ret;
-	foreach ( @args )
-	{
-		unless( $_ =~ /\=/ ){next;}
-		my ( $name, $val ) = split( /=/, $_, 2 );
-		$val =~ tr/+/ /;
-		$val =~ s/%([0-9a-fA-F][0-9a-fA-F])/pack('C', hex($1))/eg;
-		unless ( exists ( $ret{ $name } ) )
-		{
-			$ret{ $name } = $val;
-		} else
-		{
-			unless ( ref ( $ret{ $name } ) =~ /^ARRAY/ )
-			{
-				my $tmp = $ret{ $name };
-				delete ( $ret{ $name } );
-				$ret{ $name }[ 0 ] = $tmp;
-			}
-			push ( @{ $ret{$name} }, $val );
-		}
-	}
-
-	return \%ret;
+	$self->{ io }->decode();
 }
 
 sub getfilename()
 {
 	my ( $self ) = ( @_ );
-	my $file = $self->{ get }{ f };
+	my $file = $self->{ io }->{ get }{ f };
 
-	if ( $self->{ get }{ b } ne '' )
+	if ( $self->{ io }->{ get }{ b } ne '' )
 	{
 		my ( $y, $m, $d ) = ( '0000', '00', '00' );
-		if ( $self->{ get }{ b } =~ /([0-9]{4})([0-9]{2})([0-9]{2})/ )
+		if ( $self->{ io }->{ get }{ b } =~ /([0-9]{4})([0-9]{2})([0-9]{2})/ )
 		{
 			( $y, $m, $d ) = ( $1, $2, $3 );
 			$file = join( '/', $self->{ param }{ BLOG }, $y, $m, $d );
-		} elsif ( $self->{ get }{ b } =~ /([0-9]{4})([0-9]{2})/ )
+		} elsif ( $self->{ io }->{ get }{ b } =~ /([0-9]{4})([0-9]{2})/ )
 		{
 			( $y, $m ) = ( $1, $2 );
 			$file = join( '/', $self->{ param }{ BLOG }, $y, $m );
-		} elsif ( $self->{ get }{ b } =~ /([0-9]{4})/ )
+		} elsif ( $self->{ io }->{ get }{ b } =~ /([0-9]{4})/ )
 		{
 			$y = $1;
 			$file = join( '/', $self->{ param }{ BLOG }, $y );
@@ -135,7 +86,7 @@ sub getparentdirpath()
 {
 	my ( $self, $dir ) = ( @_ );
 	$dir =~ /^(.+\/)(?:[^\/]+\/)$/;
-	return my $parent = $1 || '';
+	return $1 || '';
 }
 
 sub getdirlist()
@@ -144,16 +95,27 @@ sub getdirlist()
 
 	my $basedir = $self->{ param }{ DIR } . '/' . $dir;
 	opendir( DIR, $basedir );
-	my @list = sort{ $a cmp $b }( readdir( DIR ) );
+	my @list = readdir( DIR );
 	closedir( DIR );
 
+	my @dir;
+	my @file;
+	my $obj;
 	while( scalar( @list ) )
 	{
-		if ( $list[ 0 ] =~ /^\./ ){ shift( @list ); next; }
-		last;
+		$obj = shift( @list );
+		if ( $obj =~ /^\./ ){ next; }
+		if ( -f $basedir . $obj )
+		{
+			if ( $obj =~ /(.+)\.md$/ ){ $obj = $1; }
+			push( @file, $obj );
+		} else
+		{
+			push( @dir, $obj . '/' );
+		}
 	}
 
-	return \@list;
+	return [ sort{ $a cmp $b }( @dir ), sort{ $a cmp $b }( @file ) ];
 }
 
 sub out
@@ -227,7 +189,7 @@ sub dirlist
 	my $content = '<h1>' . $dir . '</h1>' . '<ul>';
 
 	my $parent = $self->getparentdirpath( $dir );
-	if ( $parent ne '' )
+	if ( $parent ne '' || $dir ne './' )
 	{
 		$content .= '<li><a href="' . $path . uri_escape_utf8( $parent ) . '">' . '..' . '</a></li>';
 	}

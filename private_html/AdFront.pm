@@ -19,7 +19,7 @@ sub init()
 
     $self->SUPER::init();
 
-	unless ( exists( $self->{ post }{ text } ) ){ $self->{ post }{ text } = ''; }
+	unless ( exists( $self->{ io }->{ post }{ text } ) ){ $self->{ io }->{ post }{ text } = ''; }
 
 	my $uri = $ENV{ 'REQUEST_URI' } || '';
 	$uri = ~ /([^\/]+)(?:\?.+)$/;
@@ -38,7 +38,7 @@ sub error
 		return $tmplate->head() . $code . $tmplate->foot();
 	}
 
-	$self->{ param }{ file } = $self->{ get }{ f } . '.md';
+	$self->{ param }{ file } = $self->{ io }->{ get }{ f } . '.md';
 	return $self->outhtml();
 }
 
@@ -55,14 +55,14 @@ sub outhtml
 	my $mdtxt = '';
 	my $title = "";
 
-	if ( $self->{ post }{ text } ne '' )
+	if ( $self->{ io }->{ post }{ text } ne '' )
 	{
-		( $title ) = split( /\n/, $self->{ post }{ text }, 2 );
+		( $title ) = split( /\n/, $self->{ io }->{ post }{ text }, 2 );
 		$title =~ s/^\#+ //;
 		$title =~ s/[\r\n]//g;
 		#$title =~ s/([^\\s]+)/$1/;
 		if ( $title ne '' ){ $title .= ' - '; }
-		$content = ${ $md->outInMem( \$self->{ post }{ text } ) };
+		$content = ${ $md->outInMem( \$self->{ io }->{ post }{ text } ) };
 	} else
 	{
 		if ( open( MD, "< " . $self->{ param }{ DIR } . '/' . $self->{ param }{ file } ) )
@@ -82,7 +82,7 @@ sub outhtml
 
 	my $tmplate = new Template( $self->{ param } );
 
-	return $tmplate->head() . $self->form( \($self->{ post }{ text } || $mdtxt) ) . $content . $tmplate->foot();
+	return $tmplate->head() . $self->form( \($self->{ io }->{ post }{ text } || $mdtxt) ) . $content . $tmplate->foot();
 }
 
 sub form()
@@ -92,7 +92,7 @@ sub form()
 	'" method="post"><textarea style="width:98%;height:200px;margin:10px auto;display:block;" name="text" autofocus="autofocus">' . ${ $md } .
 	'</textarea>' .
 	'<input type="submit" name="preview" value="Preview" />' .
-	($self->{ post }{ text } eq '' ? '' : '<input type="submit" name="post" value="Post" />') .
+	($self->{ io }->{ post }{ text } eq '' ? '' : '<input type="submit" name="post" value="Post" />') .
 	'</form><hr />';
 }
 
