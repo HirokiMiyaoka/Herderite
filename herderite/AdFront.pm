@@ -69,7 +69,7 @@ sub dirlist
 	my $parent = $self->{ io }->getparentdirpath( $dir );
 	if ( $parent ne '' || $dir ne './' )
 	{
-		$content .= '<li><a href="' . $path . uri_escape_utf8( $parent ) . '">' . '../' . '</a></li>';
+		$content .= '<li><a href="' . $path . ( $parent eq '' ? '.' : uri_escape_utf8( $parent )) . '">' . '../' . '</a></li>';
 	}
 
 	foreach( @list )
