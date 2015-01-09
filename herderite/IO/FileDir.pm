@@ -5,9 +5,9 @@ use warnings;
 
 sub new
 {
-	my ( $package, $param ) = @_;
+	my ( $package, $io ) = @_;
 
-	return bless ( { io => $param }, $package );
+	return bless ( { io => $io }, $package );
 }
 
 sub loadmarkdown()
@@ -34,6 +34,10 @@ sub savemarkdown()
 {
 	my ( $self, $file, $md ) = ( @_ );
 
+	$file =~ /(.+)\/[^\/]+$/;
+	my $dir = $1;
+	$self->createrecdir( $dir );
+
 	if ( open( MD, "> " . $self->{ io }->{ param }{ PUBDIR } . '/' . $file ) )
 	{
 		print MD ${ $md };
@@ -56,19 +60,32 @@ sub loadfile()
 	return \$txt;
 }
 
+sub createrecdir()
+{
+	my ( $self, $dir ) = ( @_, '' );
+
+	my @dir = split( /\//, $dir );
+	$dir = $self->{ io }->{ param }{ PUBDIR };
+	foreach ( @dir )
+	{
+		$dir .= '/' . $_;
+		unless ( -d $dir ){ mkdir( $dir, 0705 ); }
+	}
+}
+
 sub checkfiledir()
 {
 	my ( $self, $file ) = ( @_ );
 	my $dir = '';
 	if ( $file ne '' )
 	{
-		if ( -r $self->{ io }->{ param }{ PUBDIR } . '/' . $file . '.md')
-		{
-			$file .= '.md';
-		} elsif ( -d $self->{ io }->{ param }{ PUBDIR } . '/' . $file )
+		if ( -d $self->{ io }->{ param }{ PUBDIR } . '/' . $file )
 		{
 			$dir = $file;
 			$file = '';
+		} elsif ( -r $self->{ io }->{ param }{ PUBDIR } . '/' . $file . '.md' || $self->{ io }->{ param }{ mode } == 1 )
+		{
+			$file .= '.md';
 		} else
 		{
 			$file = '';

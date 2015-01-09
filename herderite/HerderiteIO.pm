@@ -11,6 +11,7 @@ sub new
 
 	my $obj =  bless ( { param => $param }, $package );
 
+	$obj->readmode();
 	$obj->{ filedir } = new FileDir( $obj );
 
 	return $obj;
@@ -71,6 +72,18 @@ sub CommonDecode
 	}
 
 	return \%ret;
+}
+
+sub writemode()
+{
+	my ( $self ) = ( @_ );
+	$self->{ param }{ mode } = 1;
+}
+
+sub readmode()
+{
+	my ( $self ) = ( @_ );
+	$self->{ param }{ mode } = 0;
 }
 
 sub loadmarkdown()

@@ -26,6 +26,8 @@ sub init()
 	my $uri = $ENV{ 'REQUEST_URI' } || '';
 	$uri =~ /([^\/]+)(?:\?.+)$/;
 	$self->{ param }{ script } = $1 || './';
+
+	$self->{ io }->writemode();
 }
 
 sub error
@@ -57,12 +59,12 @@ sub dirlist
 
 	if ( exists( $self->{ io }->{ post }{ d } ) && $self->{ io }->{ post }{ d } ne '' )
 	{
-		mkdir( $basedir . $self->{ io }->{ post }{ d }, 0705 );
+		mkdir( $basedir . $self->{ io }->{ post }{ d }, 0705 ); #TODO: moev FileIO
 	}
 
 	my @list = @{ $self->{ io }->getdirlist( $dir ) };
 
-	my $content = '<ul>';
+	my $content = '<h1>' . $dir . '</h1><ul>';
 
 	my $parent = $self->{ io }->getparentdirpath( $dir );
 	if ( $parent ne '' || $dir ne './' )
@@ -83,14 +85,26 @@ sub dirlist
 
 	my $tmplate = new Template( $self->{ param }, $self->{ plugin } );
 
+	my $newblog = $self->{ param }{ BLOG };
+	if ( $dir =~ /^(\.\/){0,1}$newblog\/$/ )
+	{
+		my ( @t ) = localtime( time() ); #TODO: param->time.
+		$newblog = '<form style="float:right;margin:5px;" action="' .
+		$self->{ param }{ script } . '?' . ( $ENV{ 'QUERY_STRING' } || '' ) .
+		'" method="get"><input type="hidden" name="b" value="' .
+		sprintf( '%4d%02d%02d', $t[ 5 ] + 1900, $t[ 4 ] = 1, $t[ 3 ] ) .
+		'" /><input type="submit" value="Blog post" /></form>';
+	} else{ $newblog = ''; }
+
 	return \( $tmplate->head() .
-	'<h1>' . $dir . '</h1>' .
-	'<form style="text-align:right;margin:5px;" action="' .
+	'<div style="height:1em;">' .
+	$newblog .
+	'<form style="float:right;margin:5px;" action="' .
 	$self->{ param }{ script } . '?' . ( $ENV{ 'QUERY_STRING' } || '' ) .
 	'" method="post"><input type="text" name="d" /><input type="submit" value="Create dir" /></form>' .
-	'<form style="text-align:right;margin:5px;" action="' .
+	'<form style="float:right;margin:5px;" action="' .
 	$self->{ param }{ script } . '?' . ( $ENV{ 'QUERY_STRING' } || '' ) .
-	'" method="get"><input type="text" name="f" /><input type="submit" value="Create page" /></form>' .
+	'" method="get"><input type="text" name="f" /><input type="submit" value="Create page" /></form></div>' .
 	$content . $tmplate->foot() );
 }
 
