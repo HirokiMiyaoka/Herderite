@@ -64,6 +64,19 @@ div#side {
 	float:left;
 	width: 199px;
 	border-left: solid 1px #d9def7;
+	margin: 10px 0px;
+}
+
+div#side > h2 {
+	margin: 10px;
+}
+
+div#side > ul {
+	margin: 10px;
+}
+
+div#side li > ull {
+	margin: 0px;
 }
 
 footer {

@@ -16,7 +16,7 @@ sub list
 	my $out = '';
 	my @y = reverse( @{ $self->{ io }->getblogdir() } );
 
-	$out = '<ul>';
+	$out = '<h2><a href="' . $self->{ param }{ HOME } . '?b=blog">Blog</a></h2><ul>';
 	foreach ( @y )
 	{
 		if ( $_ eq $y )
