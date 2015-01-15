@@ -7,6 +7,12 @@ body {
 	margin: 0px;
 	padding: 0px;
 	font-family: "Yu Gothic",YuGothic,Meiryo,sans-serif;
+	background-color: #43495d;
+	color: #d9def7;
+}
+
+a {
+	color: #86bbf0;
 }
 
 body > div {
@@ -57,7 +63,7 @@ div#foot {
 div#side {
 	float:left;
 	width: 199px;
-	border-left: solid 1px #383749;
+	border-left: solid 1px #d9def7;
 }
 
 footer {
@@ -66,16 +72,17 @@ footer {
 	width: 100%;
 	height: 30px;
 	background-color: #383749;
-	color: #d3dde8;
+	color: #d9def7;
 	text-align: center;
 }
 
 footer a {
-	color: #d3dde8;
+	color: #d9def7;
 	text-decoration: none;
 }
 
 hr{
 	border-width: 1px 0px 0px;
 	border-style: solid;
+	border-color: #d9def7;
 }

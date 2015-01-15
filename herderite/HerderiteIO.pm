@@ -116,11 +116,11 @@ sub getfilename()
 		{
 			( $y, $m, $d ) = ( $1, $2, $3 );
 			$file = join( '/', $self->{ param }{ BLOG }, $y, $m, $d );
-		} elsif ( $self->{ io }->{ get }{ b } =~ /([0-9]{4})([0-9]{2})/ )
+		} elsif ( $self->{ get }{ b } =~ /([0-9]{4})([0-9]{2})/ )
 		{
 			( $y, $m ) = ( $1, $2 );
 			$file = join( '/', $self->{ param }{ BLOG }, $y, $m );
-		} elsif ( $self->{ io }->{ get }{ b } =~ /([0-9]{4})/ )
+		} elsif ( $self->{ get }{ b } =~ /([0-9]{4})/ )
 		{
 			$y = $1;
 			$file = join( '/', $self->{ param }{ BLOG }, $y );

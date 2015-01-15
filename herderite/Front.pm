@@ -82,18 +82,46 @@ sub dirlist
 	my $content = '<h1>' . $dir . '</h1>' . '<ul>';
 
 	my $parent = $self->{ io }->getparentdirpath( $dir );
-	if ( $parent ne '' || $dir ne './' )
-	{
-		$content .= '<li><a href="' . $path . uri_escape_utf8( $parent ) . '">' . '../' . '</a></li>';
-	}
 
-	foreach( @list )
+	my $bdir = $self->{ param }{ BLOG };
+	if ( $dir =~ /^$bdir\/(.+)$/ )
 	{
-		if ( -f $basedir . $_ && $_ =~ /(.+)\.md$/)
+		$bdir = $1;
+		$bdir =~ s/[^0-9]+//g;
+		$path = $self->{ param }{ HOME } . '?b=';
+
+		if ( $parent ne '' || $dir ne './' )
 		{
-			$_ = $1;
+			$content .= '<li><a href="' . $path . 'blog">' . '../' . '</a></li>';
 		}
-		$content .= '<li><a href="' . $path .uri_escape_utf8( $dir . $_ ) . '">' . $_ . '</a></li>';
+
+		foreach( @list )
+		{
+			my $n = $_;
+			if ( -f $basedir . $_ && $_ =~ /(.+)\.md$/)
+			{
+				$n = $_ = $1;
+			} elsif( $_ =~ /([0-9]+)\// )
+			{
+				$n = $1;
+			}
+			$content .= '<li><a href="' . $path . $bdir . $n . '">' . $_ . '</a></li>';
+		}
+	} else
+	{
+		if ( $parent ne '' || $dir ne './' )
+		{
+			$content .= '<li><a href="' . $path . uri_escape_utf8( $parent ) . '">' . '../' . '</a></li>';
+		}
+
+		foreach( @list )
+		{
+			if ( -f $basedir . $_ && $_ =~ /(.+)\.md$/)
+			{
+				$_ = $1;
+			}
+			$content .= '<li><a href="' . $path . uri_escape_utf8( $dir . $_ ) . '">' . $_ . '</a></li>';
+		}
 	}
 
 	$content .= '</ul>';
