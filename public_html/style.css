@@ -26,6 +26,7 @@ body > div {
 header {
 	height: 100px;
 	background-color: #383749;
+	position: relative;
 }
 
 a#logo {
