@@ -127,7 +127,11 @@ sub outhtml
 
 		if ( exists( $self->{ io }->{ post }{ post } ) )
 		{
-			$self->{ io }->savemarkdown( $self->{ param }{ file }, \$self->{ io }->{ post }{ text } )
+			$self->{ io }->savemarkdown( $self->{ param }{ file }, \$self->{ io }->{ post }{ text } );
+			# TODO: write check.
+			my $tmp = $self->{ io }->{ post }{ text };
+			$mdtxt = \$tmp;
+			$self->{ io }->{ post }{ text } = '';
 		}
 
 	} else

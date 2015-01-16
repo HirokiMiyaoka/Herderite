@@ -18,7 +18,7 @@ sub header
 sub footer
 {
 	my ( $self ) = ( @_ );
-	return $self->{ param }{ CPYRIGHT } . ' Powered by <a href="https://github.com/HirokiMiyaoka/Herderite" target="_blank" title="Herderite GithHub page.">Herderite</a> &copy; 2014 Hiroki';
+	return $self->{ param }{ CPYRIGHT } . ' Powered by <a href="https://github.com/HirokiMiyaoka/Herderite" target="_blank" title="Herderite GithHub page.">Herderite</a>';
 }
 
 sub headmenu
