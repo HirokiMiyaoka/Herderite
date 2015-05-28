@@ -92,7 +92,7 @@ sub dirlist
 		$newblog = '<form style="float:right;margin:5px;" action="' .
 		$self->{ param }{ script } . '?' . ( $ENV{ 'QUERY_STRING' } || '' ) .
 		'" method="get"><input type="hidden" name="b" value="' .
-		sprintf( '%4d%02d%02d', $t[ 5 ] + 1900, $t[ 4 ] = 1, $t[ 3 ] ) .
+		sprintf( '%4d%02d%02d', $t[ 5 ] + 1900, $t[ 4 ] + 1, $t[ 3 ] ) .
 		'" /><input type="submit" value="Blog post" /></form>';
 	} else{ $newblog = ''; }
 
