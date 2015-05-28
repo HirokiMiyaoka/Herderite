@@ -10,6 +10,7 @@ use Front::Markdown;
 use Front::Template;
 use Front::Blog;
 use Front::Tool;
+use Plugin::Manaegment;
 
 sub new
 {
@@ -24,7 +25,11 @@ sub init
 	$self->{ io } = new HerderiteIO( $self->{ param } );
 	$self->{ io }->getdevice();
 	$self->{ io }->decode();
-	$self->{ plugin } = { tool => new Tool( $self->{ param }, $self->{ io } ) };
+	$self->{ plugin } = {
+		management => new Manaegment( $self->{ param }, $self->{ io } ),
+		tool => new Tool( $self->{ param }, $self->{ io } ),
+	};
+	$self->{ plugin }{ management }->loadplugin();
 }
 
 sub out
@@ -142,8 +147,10 @@ sub outhtml
 	if ( -f $self->{ param }{ file } )
 	{
 		my $md = new Markdown( $self->{ param }, $self->{ io } );
-		$content = ${ $md->out( $self->{ param }{ file } ) };
+		$content = ${ $md->out( $self->{ param }{ file }, $self->{ plugin }{ management } ) };
 	}
+
+	$self->{ plugin }{ management }->aftermdparse( \$content );
 
 	my $tmplate = new Template( $self->{ param }, $self->{ plugin } );
 

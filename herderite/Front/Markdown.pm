@@ -14,16 +14,18 @@ sub new
 
 sub out
 {
-	my ( $self, $file ) = ( @_ );
+	my ( $self, $file, $plugin ) = ( @_ );
 
-	my ( $title, $md ) = $self->{ io }->loadmarkdown( $file );
+	my ( $title, $md ) = $self->{ io }->loadmarkdown( $file, $plugin );
 
 	$title =~ s/^\#+ //;
 	$title =~ s/[\r\n]//g;
 	#$title =~ s/([^\\s]+)/$1/;
 	if ( $title ne '' ){ $title .= ' - '; }
-
 	$self->{ param }{ TITLE } = $title . $self->{ param }{ TITLE };
+
+	if ( $plugin ){ $plugin->beforemdparse( $md ); }
+
 	my $html = &markdown( ${ $md } );
 
 	return \$html;
@@ -31,7 +33,18 @@ sub out
 
 sub outInMem
 {
-	my ( $self, $md ) = ( @_ );
+	my ( $self, $md, $plugin ) = ( @_ );
+
+	if ( $plugin )
+	{
+		my @line = split( /\n/, ${ $md } );
+		foreach ( @line )
+		{
+			$_ = $plugin->mdplugin( $_ );
+		}
+		my $html = &markdown( join( "\n", @line ) );
+		return \$html;
+	}
 
 	my $html = &markdown( ${ $md } );
 	return \$html;

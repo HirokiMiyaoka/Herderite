@@ -12,19 +12,26 @@ sub new
 
 sub loadmarkdown()
 {
-	my ( $self, $file ) = ( @_ );
+	my ( $self, $file, $plugin ) = ( @_ );
 
 	my $title = '';
 	my $md = '';
 
-	if ( open( MD, "< " . $self->{ io }->{ param }{ PUBDIR } . '/' . $file ) )
+	my $fh;
+	if ( open( $fh, "< " . $self->{ io }->{ param }{ PUBDIR } . '/' . $file ) )
 	{
-		$title = $md = <MD>;
-		while( <MD> )
+		$title = $md = <$fh>;
+		if ( $plugin )
 		{
-			$md .= $_;
+			while( <$fh> )
+			{
+				$md .= $plugin->mdplugin( $_ );
+			}
+		} else
+		{
+			while( <$fh> ) { $md .= $_; }
 		}
-		close( MD );
+		close( $fh );
 	}
 
 	return ( $title, \$md );

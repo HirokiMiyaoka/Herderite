@@ -88,8 +88,8 @@ sub readmode()
 
 sub loadmarkdown()
 {
-	my ( $self, $file ) = ( @_ );
-	return $self->{ filedir }->loadmarkdown( $file );
+	my ( $self, $file, $plugin ) = ( @_ );
+	return $self->{ filedir }->loadmarkdown( $file, $plugin );
 }
 
 sub savemarkdown()

@@ -22,14 +22,14 @@ sub list
 		if ( $_ eq $y )
 		{
 			$out .= '<li>' . $_;
-			my @m = @{ $self->{ io }->getblogdir( $y ) };
+			my @m = reverse( @{ $self->{ io }->getblogdir( $y ) } );
 			$out .= '<ul>';
 			foreach ( @m )
 			{
 				if ( $_ eq $m )
 				{
 					$out .= '<li>' . $_;
-					my @d = @{ $self->{ io }->getblogdir( $y . '/' . $m ) };
+					my @d = reverse( @{ $self->{ io }->getblogdir( $y . '/' . $m ) } );
 					$out .= '<ul>';
 					foreach ( @d )
 					{

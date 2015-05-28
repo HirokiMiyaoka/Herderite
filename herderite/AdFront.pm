@@ -137,7 +137,7 @@ sub outhtml
 	} else
 	{
 		( $title, $mdtxt ) = $self->{ io }->loadmarkdown( $self->{ param }{ file } );
-		$content = ${ $md->outInMem( $mdtxt ) };
+		$content = ${ $md->outInMem( $mdtxt, $self->{ plugin }{ management } ) };
 	}
 
 	$title =~ s/^\#+ //;
