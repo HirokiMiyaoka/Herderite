@@ -104,6 +104,14 @@ sub loadfile()
 	return $self->{ filedir }->loadfile();
 }
 
+sub getcurrentdir()
+{
+	my ( $self ) = ( @_ );
+	my @e = split( /\//, $self->getfilename() );
+	my $f = pop( @e );
+	return ( join( '/', @e ), $f );
+}
+
 sub getfilename()
 {
 	my ( $self ) = ( @_ );
@@ -178,6 +186,12 @@ sub getdirlist()
 {
 	my ( $self, $dir ) = ( @_ );
 	return $self->{ filedir }->getdirlist( $dir );
+}
+
+sub getfilelist()
+{
+	my ( $self, $dir ) = ( @_ );
+	return $self->{ filedir }->getfilelist( $dir );
 }
 
 1;

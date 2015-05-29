@@ -7,7 +7,7 @@ sub new
 {
 	my ( $package, $param, $io ) = @_;
 
-	return bless ( { param => $param, io => $io, mdbefore => [], mdafter => [], mdplugin => {} }, $package );
+	return bless ( { param => $param, io => $io, name => '', mdbefore => [], mdafter => [], mdplugin => {} }, $package );
 }
 
 sub list()
@@ -61,6 +61,7 @@ sub rep()
 	my $self = shift( @_ );
 	my ( $plugin, @arg ) = split( / /, shift( @_ ) );
 	unless ( exists( $self->{ mdplugin }{ $plugin } ) ){ return "<!-- $plugin not found -->"; }
+	$self->{ name } = $plugin;
 	return ${ $self->{ mdplugin }{ $plugin }->inline( @arg ) };
 }
 

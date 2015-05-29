@@ -144,4 +144,23 @@ sub getdirlist()
 	return [ ( sort{ $a cmp $b }( @dir ) ), ( sort{ $a cmp $b }( @file ) ) ];
 }
 
+sub getfilelist()
+{
+	my ( $self, $dir ) = ( @_ );
+
+	my $basedir = $self->{ io }->{ param }{ PUBDIR } . '/' . $dir . '/';
+	my @file = ();
+	my $dh;
+	if ( opendir( $dh, $basedir ) )
+	{
+		foreach( readdir( $dh ) )
+		{
+			unless ( -f $basedir . $_  ){ next; }
+			push( @file, $_ );
+		}
+		closedir( $dh );
+	}
+	return [ ( sort{ $a cmp $b }( @file ) ) ];
+}
+
 1;

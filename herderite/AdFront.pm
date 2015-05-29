@@ -23,7 +23,7 @@ sub init()
 
 	unless ( exists( $self->{ io }->{ post }{ text } ) ){ $self->{ io }->{ post }{ text } = ''; }
 
-	my $uri = $ENV{ 'REQUEST_URI' } || '';
+	my $uri = $ENV{ REQUEST_URI } || '';
 	$uri =~ /([^\/]+)(?:\?.+)$/;
 	$self->{ param }{ script } = $1 || './';
 
@@ -123,7 +123,7 @@ sub outhtml
 	if ( $self->{ io }->{ post }{ text } ne '' )
 	{
 		( $title ) = split( /\n/, $self->{ io }->{ post }{ text }, 2 );
-		$content = ${ $md->outInMem( \$self->{ io }->{ post }{ text } ) };
+		$content = ${ $md->outInMem( \$self->{ io }->{ post }{ text }, $self->{ plugin }{ management } ) };
 
 		if ( exists( $self->{ io }->{ post }{ post } ) )
 		{
@@ -132,6 +132,8 @@ sub outhtml
 			my $tmp = $self->{ io }->{ post }{ text };
 			$mdtxt = \$tmp;
 			$self->{ io }->{ post }{ text } = '';
+			$self->{ param }{ redirect } = $ENV{ REQUEST_URI };
+			return \( '' );
 		}
 
 	} else
@@ -161,7 +163,46 @@ sub form()
 	'</textarea>' .
 	'<input type="submit" name="preview" value="Preview" />' .
 	($self->{ io }->{ post }{ text } eq '' ? '' : '<input type="submit" name="post" value="Post" />') .
-	'</form><hr />';
+	'</form>' . ${ $self->uploadform() } .
+	'<hr />';
+}
+
+sub uploadform()
+{
+	my ( $self ) = ( @_ );
+	my ( $path, $f ) = $self->{ io }->getcurrentdir();
+	my $base = $self->{ param }{ UPLOAD } . '/';
+	if ( $f ne $self->{ param }{ DEF } )
+	{
+		$path .= '/' . $f . '/';
+	}
+
+	my @files = @{ $self->{ io }->getfilelist( $base . $path ) };
+
+	my $html = '';
+
+	$html = '<table><tr><td>File</td><td>Del</td></tr>';
+	my $pubpath = $self->{ param }{ ADDRESS } . '/' . $base . $path;
+	foreach ( @files )
+	{
+		$html .= '<tr><td><a href="' . $pubpath . $_ . '" target="_blank">' . $_ . '</a></td><td>' . 'Del</td></tr>';
+	}
+	$html .= '</table>';
+
+	$html .= '<form action="./uploader.cgi" method="post" enctype="multipart/form-data">';
+	$html .= '<table><tr><td><input type="file" name="upfile" class="upfile" /></td><td>';
+	$html .= '<input type="hidden" name="path" value="' . $path . '" id="path" />';
+	$html .= '<input type="hidden" name="ref" value="' . $self->{ param }{ PRIVATE } . $ENV{ REQUEST_URI } . '" />';
+	$html .= '<input type="submit" name="send" value="Uplaod" class="submit" /></td></tr></table></form>';
+
+	return \$html;
+}
+
+sub redirect()
+{
+	my ( $self, $path ) = ( @_ );
+	print 'Location: ' . ( $self->{ param }{ PRIVATE } . $path ) . "\n\n";
+	exit( 0 );
 }
 
 1;

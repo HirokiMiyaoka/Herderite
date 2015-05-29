@@ -12,9 +12,10 @@ sub new
 
 sub init()
 {
-	my ( $self, $m ) = @_;
-	$self->{ m } = $m;
-	$m->addmdplugin( "blog", $self );
+	my ( $self, $pm ) = @_;
+	$self->{ pm } = $pm;
+	$pm->addmdplugin( "blog", $self );
+	$pm->addmdplugin( "blogimg", $self );
 }
 
 sub omit()
@@ -27,10 +28,28 @@ sub omit()
 
 sub inline()
 {
+	my ( $self, @arg ) = ( @_ );
+
+	my $name = $self->{ pm }->{ name };
+	if ( $name eq 'blog' )
+	{
+		return $self->blog( @arg );
+	} elsif ( $name eq 'blogimg' )
+	{
+		return $self->blogimg( @arg );
+	}
+
+	return \( '' );
+}
+
+##########
+
+sub blog()
+{
 	my ( $self, $count ) = ( @_, 1 );
 
-	my $io = $self->{ m }->{ io };
-	my $pr = $self->{ m }->{ param };
+	my $io = $self->{ pm }->{ io };
+	my $pr = $self->{ pm }->{ param };
 
 	my ( $y, $m, $d );
 	my $ret = '';
@@ -41,15 +60,31 @@ sub inline()
 		{
 			foreach $d (reverse( @{ $io->getblogdir( $y . '/' . $m ) } ) )
 			{
-				my ( $title, $md ) = ( $io->loadmarkdown( $pr->{ BLOG } . '/' . $y . '/' . $m . '/' . $d, $self->{ m } ) );
+				my $tmp = $io->{ get }{ b };
+				$io->{ get }{ b } = $y . $m . $d;
+				my ( $title, $md ) = ( $io->loadmarkdown( $pr->{ BLOG } . '/' . $y . '/' . $m . '/' . $d, $self->{ pm } ) );
 				( $d ) = split( /\./, $d );
 				$ret .= "----\n" . &omit( $md, $max ) . '<div class="blogfoot"><a href="' . $pr->{ HOME } . '?b=' . $y . $m . $d . '">続きを読む</a></div>';
+				$io->{ get }{ b } = $tmp;
 				if( --$count <= 0 ){ return \$ret; }
 			}
 		}
 	}
 
 	return \$ret;
+}
+
+sub blogimg()
+{
+	my ( $self, $file ) = ( @_ );
+
+	my ( $path, $d ) = $self->{ pm }->{ io }->getcurrentdir();
+
+	$path = $self->{ pm }->{ param }{ ADDRESS } . '/' . $self->{ pm }->{ param }{ UPLOAD } . '/' . $path . '/' . $d . '/' . $file;
+
+	$path = '<img src="' . $path . '" />';
+
+	return \$path;
 }
 
 1;

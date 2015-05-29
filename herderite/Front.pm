@@ -53,11 +53,24 @@ sub out
 		$out = ${ $self->error( 404 ) };
 	}
 
+	if ( exists( $self->{ param }{ redirect } ) )
+	{
+		$self->redirect( $self->{ param }{ redirect } );
+		return ;
+	}
+
 	push( @{ $self->{ param }{ HTTP } }, "Content-Length: " . length( $out ) . "\n" );
 
 	print @{ $self->{ param }{ HTTP } };
 	print "\n";
 	print $out;
+}
+
+sub redirect()
+{
+	my ( $self, $path ) = ( @_ );
+	print 'Location:' . ( $self->{ param }{ ADDRESS } . $path ) . "\n\n";
+	exit( 0 );
 }
 
 sub error

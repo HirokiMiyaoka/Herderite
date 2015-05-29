@@ -15,8 +15,8 @@ sub Main
 
 	$front->init();
 
-	$front->{ param }{ MAINCSS } = $front->{ param }{ ADDRESS } . $front->{ param }{ MAINCSS };
-	$front->{ param }{ MDCSS } = $front->{ param }{ ADDRESS } . $front->{ param }{ MDCSS };
+	$front->{ param }{ MAINCSS } = $front->{ param }{ ADDRESS } . '/' . $front->{ param }{ MAINCSS };
+	$front->{ param }{ MDCSS } = $front->{ param }{ ADDRESS } . '/' . $front->{ param }{ MDCSS };
 
 	$front->out();
 }
