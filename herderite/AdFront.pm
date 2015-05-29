@@ -20,6 +20,7 @@ sub init()
 	my ( $self ) = ( @_ );
 
     $self->SUPER::init();
+	$self->{ param }{ mddate } = 0;
 
 	unless ( exists( $self->{ io }->{ post }{ text } ) ){ $self->{ io }->{ post }{ text } = ''; }
 

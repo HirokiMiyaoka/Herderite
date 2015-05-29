@@ -85,6 +85,11 @@ div.blogfoot{
 	text-align: right;
 }
 
+div.mdfoot{
+	text-align: right;
+	font-size: 0.8em;
+}
+
 footer {
 	position: absolute;
 	bottom: 0;

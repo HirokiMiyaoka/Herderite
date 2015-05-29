@@ -30,6 +30,7 @@ sub init
 		tool => new Tool( $self->{ param }, $self->{ io } ),
 	};
 	$self->{ plugin }{ management }->loadplugin();
+	$self->{ param }{ mddate } = 1;
 }
 
 sub out

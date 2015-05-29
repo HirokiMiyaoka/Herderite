@@ -18,7 +18,7 @@ cpan URI::Escape
 
 ```
 chmod 705 public_html/index.cgi
-chmod 705 private_html/index.cgi
+chmod 705 private_html/*.cgi
 ```
 
 ```

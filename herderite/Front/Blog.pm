@@ -36,7 +36,7 @@ sub list
 						( $_ ) = split( /\./, $_ );
 						if ( $_ eq $d )
 						{
-							$out .= '<li>' . $_ . '</li>';
+							$out .= '<li><a href="' . $self->{ param }{ HOME } . '?b=' . $y . $m . $_ . '"><b>' . $_ . '</b></a></li>';
 						} else
 						{
 							$out .= '<li><a href="' . $self->{ param }{ HOME } . '?b=' . $y . $m . $_ . '">' . $_ . '</a></li>';

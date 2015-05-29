@@ -10,6 +10,21 @@ sub new
 	return bless ( { io => $io }, $package );
 }
 
+sub mdfoot()
+{
+	my ( $path ) = ( @_ );
+	my $html = '';
+	$html .= '<div class="mdfoot">';
+	if ( $path =~ /\/([0-9]+)\/([0-9]+)\/([0-9]+)\.md$/ )
+	{
+		$html .= '<div>Posted:' . $1 . '/' . $2 . '/' . $3 . '</div>';
+	}
+	my ( $s, $m, $h, $D, $M, $Y ) = localtime( (stat( $path ))[ 9 ] );
+	$html .= '<div>Update:' . ( $Y + 1900 ) . '/' . ( $M + 1 ) . '/' . $D . ' ' . $h . ':' . $m . ':' . $s . '</div>';
+	$html .= '</div>';
+	return $html;
+}
+
 sub loadmarkdown()
 {
 	my ( $self, $file, $plugin ) = ( @_ );
@@ -18,9 +33,11 @@ sub loadmarkdown()
 	my $md = '';
 
 	my $fh;
-	if ( open( $fh, "< " . $self->{ io }->{ param }{ PUBDIR } . '/' . $file ) )
+	$file = $self->{ io }->{ param }{ PUBDIR } . '/' . $file;
+	if ( open( $fh, "< " . $file ) )
 	{
-		$title = $md = <$fh>;
+		$title = <$fh>;
+		$md .= $title;
 		if ( $plugin )
 		{
 			while( <$fh> )
@@ -31,6 +48,7 @@ sub loadmarkdown()
 		{
 			while( <$fh> ) { $md .= $_; }
 		}
+		if ( $self->{ io }->{ param }{ mddate } ){ $md .= &mdfoot( $file ); }
 		close( $fh );
 	}
 

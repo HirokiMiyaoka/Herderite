@@ -70,9 +70,11 @@ sub foot
 	my ( $self ) = ( @_ );
 
 	return $self->footmenu() .
-		'			</article>' .
+		'			</article>
+' .
 		$self->sidemenu() .
-		'		</div>
+		'
+		</div>
 		<footer>' . $self->footer() . '</footer>
 	</div>
 </body>
