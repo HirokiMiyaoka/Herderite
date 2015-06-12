@@ -199,7 +199,8 @@ sub uploadform()
 	my $pubpath = $self->{ param }{ ADDRESS } . '/' . $base . $path;
 	foreach ( @files )
 	{
-		$html .= '<tr><td><a href="' . $pubpath . $_ . '" target="_blank">' . $_ . '</a></td><td>' . 'Del</td></tr>';
+		$html .= '<tr><td><a href="' . $pubpath . $_ . '" target="_blank">' . $_ . '</a></td><td>' .
+			'<a href="./file.cgi?mode=remove&path=' . $path . $_ . '">Del</a></td></tr>';
 	}
 	$html .= '</table>';
 

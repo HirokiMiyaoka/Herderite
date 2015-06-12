@@ -16,11 +16,18 @@ sub main()
 
 	if ( $data{ mode } eq 'remove' )
 	{
-	} else
-	{
-		my $pubpath = $conf{ ADDRESS } . '/' . $conf{ UPLOAD } . '/';
-		&list( $conf{ DOCROOT } . $data{ path }, $pubpath );
+		return &remove( $conf{ DOCROOT } . $data{ path }, $conf{ ADDRESS } );
 	}
+	my $pubpath = $conf{ ADDRESS } . '/' . $conf{ UPLOAD } . '/';
+
+	return &list( $conf{ DOCROOT } . $data{ path }, $pubpath );
+}
+
+sub remove()
+{
+	my ( $file, $ad  ) = ( @_ );
+	if ( -f $file ){ unlink( $file ); }
+	return 'Location: ' . ( $ENV{ HTTP_REFERER } || $ad ) . "\n\n";
 }
 
 sub list()
