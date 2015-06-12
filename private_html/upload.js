@@ -199,7 +199,7 @@ var SteelBlue;
 				//window.location.reload();
 				this.larea.innerHTML = "Drag upload";
 				var xhr = new XMLHttpRequest();
-				xhr.open("GET", "/file.cgi", true);
+				xhr.open("GET", "/file.cgi?path=" + this.parea.value, true);
 				xhr.onload = function (e) {
 					if ( xhr.readyState === 4 && xhr.status === 200 ) {
 						document.getElementById("filelist").innerHTML = xhr.responseText;

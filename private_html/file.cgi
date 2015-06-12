@@ -20,7 +20,7 @@ sub main()
 	}
 	my $pubpath = $conf{ ADDRESS } . '/' . $conf{ UPLOAD } . '/';
 
-	return &list( $conf{ DOCROOT } . $data{ path }, $pubpath );
+	return &list( $conf{ DOCROOT }, $data{ path }, $pubpath );
 }
 
 sub remove()
@@ -32,18 +32,20 @@ sub remove()
 
 sub list()
 {
-	my ( $path, $pubpath ) = ( @_ );
+	my ( $doc, $path, $pubpath ) = ( @_ );
 
-	opendir( DIR, $path );
+	unless ( $path =~ /\/$/ ){ $path .= '/'; }
+	my $base = $doc . $path;
+	opendir( DIR, $base );
 	my @list = readdir( DIR );
 	closedir( DIR );
-	unless ( $path =~ /\/$/ ){ $path .= '/'; }
 	my $html = '<tr><td>File</td><td>Del</td></tr>';
 	foreach ( @list )
 	{
-		if ( -f $path . $_ )
+		if ( -f $base . '/' . $_ )
 		{
-			$html .= '<tr><td><a href="' . $pubpath . $_ . '" target="_blank">' . $_ . '</a></td><td>Del</td></tr>';
+			$html .= '<tr><td><a href="' . $pubpath . $_ . '" target="_blank">' . $_ . '</a></td><td>' .
+				'<a href="file.cgi?mode=remove&path=' . $path . $_ . '">Del</a></td></tr>';
 		}
 	}
 
