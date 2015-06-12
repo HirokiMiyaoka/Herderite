@@ -152,6 +152,18 @@ sub outhtml
 
 	my $tmplate = new Template( $self->{ param }, $self->{ plugin } );
 
+	$self->{ param }{ CSS } .= 'div#dragupload{width:70%;height:1em;text-align:center;padding:20px;margin:auto;background-color:rgba(127,127,127,0.5);}';
+	$self->{ param }{ JS } .= '
+function Load(){
+var script = document.createElement( "script" );
+script.type = "text/javascript";
+script.src = "upload.js";
+var firstScript = document.getElementsByTagName( "script" )[ 0 ];
+firstScript.parentNode.insertBefore( script, firstScript );
+}
+Load();
+window.onload = function () {Init()};';
+
 	return \( $tmplate->head() . $self->form( \($self->{ io }->{ post }{ text } || ${ $mdtxt } ) ) . $content . $tmplate->foot() );
 }
 
@@ -165,6 +177,7 @@ sub form()
 	'<input type="submit" name="preview" value="Preview" />' .
 	($self->{ io }->{ post }{ text } eq '' ? '' : '<input type="submit" name="post" value="Post" />') .
 	'</form>' . ${ $self->uploadform() } .
+	'<div id="dragupload">Drag upload</div>' .
 	'<hr />';
 }
 
@@ -182,7 +195,7 @@ sub uploadform()
 
 	my $html = '';
 
-	$html = '<table><tr><td>File</td><td>Del</td></tr>';
+	$html = '<table id="filelist"><tr><td>File</td><td>Del</td></tr>';
 	my $pubpath = $self->{ param }{ ADDRESS } . '/' . $base . $path;
 	foreach ( @files )
 	{
@@ -191,7 +204,7 @@ sub uploadform()
 	$html .= '</table>';
 
 	$html .= '<form action="./uploader.cgi" method="post" enctype="multipart/form-data">';
-	$html .= '<table><tr><td><input type="file" name="upfile" class="upfile" /></td><td>';
+	$html .= '<table class="upload"><tr><td><input type="file" name="upfile" class="upfile" /></td><td>';
 	$html .= '<input type="hidden" name="path" value="' . $path . '" id="path" />';
 	$html .= '<input type="hidden" name="ref" value="' . $self->{ param }{ PRIVATE } . $ENV{ REQUEST_URI } . '" />';
 	$html .= '<input type="submit" name="send" value="Uplaod" class="submit" /></td></tr></table></form>';

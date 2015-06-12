@@ -162,7 +162,7 @@ var SteelBlue;
 
 			this.path = this.parea.value;
 
-			this.larea.innerHTML = '<div id="loader"></div>';
+			this.larea.innerHTML = '<div id="loader" style="background-color:rgba(0,0,0,0.5);height:1em;"></div>';
 
 			this.UPLOADED = 0;
 			this.UPLOADMAX = this.files.length;
@@ -196,7 +196,16 @@ var SteelBlue;
 					FileUploaderManagement.self.NextUpload(msg);
 				});
 			} else {
-				window.location.reload();
+				//window.location.reload();
+				this.larea.innerHTML = "Drag upload";
+				var xhr = new XMLHttpRequest();
+				xhr.open("GET", "/file.cgi", true);
+				xhr.onload = function (e) {
+					if ( xhr.readyState === 4 && xhr.status === 200 ) {
+						document.getElementById("filelist").innerHTML = xhr.responseText;
+					}
+				};
+				xhr.send(null);
 			}
 		};
 		return FileUploaderManagement;

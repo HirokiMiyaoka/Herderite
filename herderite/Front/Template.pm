@@ -6,6 +6,8 @@ use warnings;
 sub new
 {
 	my ( $package, $param, $plugin ) = ( @_ );
+	${ $param }{ CSS } = '';
+	${ $param }{ JS } = '';
 	return bless ( { param => $param, plugin => $plugin }, $package );
 }
 
