@@ -15,6 +15,7 @@ sub Init()
 	my ( $self, $pm ) = @_;
 	$self->{ pm } = $pm;
 	$pm->AddMDPlugin( "img", $self );
+	$pm->AddMDPlugin( "category", $self );
 }
 
 sub Omit()
@@ -33,6 +34,9 @@ sub Inline()
 	if ( $name eq 'img' )
 	{
 		return $self->Img( @arg );
+	} elsif ( $name eq 'category' )
+	{
+		return $self->Category( @arg );
 	}
 
 	return \( '' );
@@ -51,6 +55,17 @@ sub Img()
 	$path = '<img src="' . $path . '" />';
 
 	return \$path;
+}
+
+sub Category()
+{
+	my ( $self, @arg ) = ( @_ );
+
+	foreach ( @arg ){ $_ = '<a href="' . $self->{ param }{ HOME } . '?c=' . $_ . '">' . $_ . '</a>'; }
+
+	my $cate = '[ ' . join( ' , ', @arg ) . ' ]';
+
+	return \$cate;
 }
 
 1;

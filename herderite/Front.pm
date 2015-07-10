@@ -43,10 +43,13 @@ sub Out
 
 	my $out;
 
-	if ( $file ne '' )
+	if ( $self->{ io }->{ get }{ c } ne '' )
+	{
+		$out = ${ $self->CategoryList( $self->{ io }->{ get }{ c }, $self->{ io }->{ get }{ p } ) };
+	} elsif ( $file ne '' )
 	{
 		$out = ${ $self->OutHtml() };
-	} elsif( $self->{ param }{ DIRLIST } && $dir ne '' )
+	} elsif ( $self->{ param }{ DIRLIST } && $dir ne '' )
 	{
 		$out = ${ $self->DirList( $dir ) };
 	} else
@@ -147,6 +150,38 @@ sub DirList
 
 	my $tmplate = new Template( $self->{ param }, $self->{ plugin } );
 
+	return \( $tmplate->Head() . $content . $tmplate->Foot() );
+}
+
+sub CategoryList()
+{
+	my ( $self, $cate, $page ) = ( @_ );
+
+	$self->{ plugin }{ blog } = new Blog( $self->{ param }, $self->{ io } );
+
+	my @list = @{ $self->{ io }->GetCategoryFileList( $cate || '' ) };
+
+	my $content = '<h1>Category - ' . $cate . '</h1>' . '<ul>';
+
+	my $v;
+	my $a;
+	foreach ( @list )
+	{
+		$_ =~ /(.+)\.md$/;
+		$v = $1;
+		if ( $v =~ /(.+)\/index$/ )
+		{
+			$a = $1;
+		} else
+		{
+			$a = $v;
+		}
+		$content .= '<li><a href="?f=' . $a . '">' . $v . '</a></li>';
+	}
+
+	$content .= '</ul>';
+
+	my $tmplate = new Template( $self->{ param }, $self->{ plugin } );
 	return \( $tmplate->Head() . $content . $tmplate->Foot() );
 }
 

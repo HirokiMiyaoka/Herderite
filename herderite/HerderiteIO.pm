@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use IO::FileDir;
+use IO::SQLiteDB;
 
 sub new
 {
@@ -13,6 +14,7 @@ sub new
 
 	$obj->ReadMode();
 	$obj->{ filedir } = new FileDir( $obj );
+	$obj->{ sqldb } = new SQLiteDB( $obj );
 
 	return $obj;
 }
@@ -95,6 +97,15 @@ sub LoadMarkdown()
 sub SaveMarkdown()
 {
 	my ( $self, $file, $md ) = ( @_ );
+
+	if ( ${ $md } =~ /\{\{category(?:\s+)(.+)\}\}/ )
+	{
+		$self->SetCategory( $file, split( ',', $1 ) );
+	} else
+	{
+		$self->SetCategory( $file );
+	}
+
 	return $self->{ filedir }->SaveMarkdown( $file, $md );
 }
 
@@ -192,6 +203,32 @@ sub GetFileList()
 {
 	my ( $self, $dir ) = ( @_ );
 	return $self->{ filedir }->GetFileList( $dir );
+}
+
+sub GetCategoryList()
+{
+	my ( $self ) = ( @_ );
+	return $self->{ sqldb }->GetCategoryList();
+}
+
+sub GetCategoryFileList()
+{
+	my ( $self, $cate ) = ( @_ );
+	return $self->{ sqldb }->GetCategoryFileList( $cate );
+}
+
+sub SetCategory()
+{
+	my ( $self, $file, @cate ) = ( @_ );
+	return $self->{ sqldb }->SetCategory( $file, @cate );
+}
+
+sub SetBlogCategory()
+{
+	my ( $self, $blog, @cate ) = ( @_ );
+	$blog =~ /([0-9]{4})([0-9]{2})([0-9]{2})/;
+	my $file = $self->{ param }{ BLOG } . '/' . $1 . '/' . $2 . '/' . $3 . 'md';
+	return $self->SetCategory( $file, @cate );
 }
 
 1;

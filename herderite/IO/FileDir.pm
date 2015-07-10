@@ -89,7 +89,7 @@ sub CreateRecDir()
 {
 	my ( $self, $dir ) = ( @_, '' );
 
-	my @dir = split( /\//, $dir );
+	my @dir = split( /\//, $dir || '' );
 	$dir = $self->{ io }->{ param }{ PUBDIR };
 	foreach ( @dir )
 	{
@@ -104,7 +104,7 @@ sub CheckFileDir()
 	my $dir = '';
 	if ( $file ne '' )
 	{
-		if ( -d $self->{ io }->{ param }{ PUBDIR } . '/' . $file )
+		if ( -d $self->{ io }->{ param }{ PUBDIR } . '/' . $file && ( $file =~ /\/$/ || ! (-r $self->{ io }->{ param }{ PUBDIR } . '/' . $file . '.md') ) )
 		{
 			$dir = $file;
 			$file = '';
@@ -179,6 +179,26 @@ sub GetFileList()
 		closedir( $dh );
 	}
 	return [ ( sort{ $a cmp $b }( @file ) ) ];
+}
+
+sub GetCategoryList()
+{
+	my ( $self ) = ( @_ );
+	# TODO: File inout.
+	return [];
+}
+
+sub GetCategoryFileList()
+{
+	my ( $self, $cate ) = ( @_ );
+	# TODO: File inout.
+	return [];
+}
+
+sub SetCategory()
+{
+	my ( $self, $file, @cate ) = ( @_ );
+	# TODO: File inout.
 }
 
 1;
