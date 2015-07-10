@@ -69,7 +69,12 @@ body > div > div:after {
 article {
 	float:left;
 	display: block;
-	width: 640px;
+	width: 600px;
+	margin: 0px 20px 20px;
+}
+
+div.category {
+	text-align: right;
 }
 
 div#head {
@@ -100,7 +105,9 @@ div#side li > ull {
 }
 
 div.blogfoot{
-	text-align: right;
+	text-align: center;
+	background-color: #383749;
+	margin: 20px;
 }
 
 div.mdfoot{

@@ -43,6 +43,7 @@ sub Decode()
 
 	unless ( exists( $self->{ get }{ f } ) ){ $self->{ get }{ f } = ''; }
 	unless ( exists( $self->{ get }{ b } ) ){ $self->{ get }{ b } = ''; }
+	unless ( exists( $self->{ get }{ c } ) ){ $self->{ get }{ c } = ''; }
 	if ( exists( $self->{ get }{ d } ) && $self->{ get }{ d } =~ /(pc|sp)/ ){ $self->{ param }{ DEV } = $1; }
 
 }

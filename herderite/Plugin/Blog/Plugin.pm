@@ -64,7 +64,7 @@ sub Blog()
 				$io->{ get }{ b } = $y . $m . $d;
 				my ( $title, $md ) = ( $io->LoadMarkdown( $pr->{ BLOG } . '/' . $y . '/' . $m . '/' . $d, $self->{ pm } ) );
 				( $d ) = split( /\./, $d );
-				$ret .= "----\n" . &Omit( $md, $max ) . '<div class="blogfoot"><a href="' . $pr->{ HOME } . '?b=' . $y . $m . $d . '">続きを読む</a></div>';
+				$ret .= "----\n" . &Omit( $md, $max ) . '<p>...</p><div class="blogfoot"><a href="' . $pr->{ HOME } . '?b=' . $y . $m . $d . '">続きを読む</a></div>';
 				$io->{ get }{ b } = $tmp;
 				if( --$count <= 0 ){ return \$ret; }
 			}

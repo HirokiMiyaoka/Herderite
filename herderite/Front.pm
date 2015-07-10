@@ -41,6 +41,12 @@ sub Out
 
 	$self->{ param }{ file } = $file;
 
+	my $bhead = $self->{ param }{ BLOG };
+	if ( $self->{ io }{ get }{ f } =~ /^$bhead\/(\d{4})\/(\d{2})\/(\d{2})/ )
+	{
+		$self->{ param }{ redirect } = $self->{ param }{ HOME } . '?b=' . $1 . $2 . $3;
+	}
+
 	my $out;
 
 	if ( $self->{ io }->{ get }{ c } ne '' )
@@ -165,6 +171,7 @@ sub CategoryList()
 
 	my $v;
 	my $a;
+	my $bhead = $self->{ io }{ BLOG };
 	foreach ( @list )
 	{
 		$_ =~ /(.+)\.md$/;
@@ -176,7 +183,13 @@ sub CategoryList()
 		{
 			$a = $v;
 		}
-		$content .= '<li><a href="?f=' . $a . '">' . $v . '</a></li>';
+		if ( $_ =~ /^$bhead\/(\d{4})\/(\d{2})\/(\d{2})/ )
+		{
+			$content .= '<li><a href="?b=' . $1 . $2 . $3 . '">' . $1 . '/' . $2 . '/' . $3 . '</a></li>';
+		} else
+		{
+			$content .= '<li><a href="?f=' . $a . '">' . $v . '</a></li>';
+		}
 	}
 
 	$content .= '</ul>';

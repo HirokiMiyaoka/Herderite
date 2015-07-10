@@ -61,9 +61,17 @@ sub Category()
 {
 	my ( $self, @arg ) = ( @_ );
 
-	foreach ( @arg ){ $_ = '<a href="' . $self->{ param }{ HOME } . '?c=' . $_ . '">' . $_ . '</a>'; }
+	my @cate;
 
-	my $cate = '[ ' . join( ' , ', @arg ) . ' ]';
+	foreach ( @arg ){ push( @cate, split( /,/, $_ ) ); }
+
+	my $bhead = $self->{ pm }->{ param }{ BLOG } . '/';
+	foreach ( @cate )
+	{
+		$_ = '<a href="' . $self->{ pm }->{ param }{ HOME } . '?c=' . $_ . '">' . $_ . '</a>';
+	}
+
+	my $cate = '<div class="category">[ ' . join( ' , ', @cate ) . ' ]</div>';
 
 	return \$cate;
 }
