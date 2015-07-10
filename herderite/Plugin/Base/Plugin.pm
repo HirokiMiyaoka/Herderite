@@ -10,14 +10,14 @@ sub new
 	return bless ( {}, $package );
 }
 
-sub init()
+sub Init()
 {
 	my ( $self, $pm ) = @_;
 	$self->{ pm } = $pm;
-	$pm->addmdplugin( "img", $self );
+	$pm->AddMDPlugin( "img", $self );
 }
 
-sub omit()
+sub Omit()
 {
 	my ( $text, $max ) = ( @_ );
 	my @line = split( /\n/, ${ $text }, $max + 1 );
@@ -25,14 +25,14 @@ sub omit()
 	return join( "\n", @line );
 }
 
-sub inline()
+sub Inline()
 {
 	my ( $self, @arg ) = ( @_ );
 
 	my $name = $self->{ pm }->{ name };
 	if ( $name eq 'img' )
 	{
-		return $self->img( @arg );
+		return $self->Img( @arg );
 	}
 
 	return \( '' );
@@ -40,11 +40,11 @@ sub inline()
 
 ##########
 
-sub img()
+sub Img()
 {
 	my ( $self, $file ) = ( @_ );
 
-	my ( $path ) = $self->{ pm }->{ io }->getcurrentdir();
+	my ( $path ) = $self->{ pm }->{ io }->GetCurrentDir();
 
 	$path = $self->{ pm }->{ param }{ ADDRESS } . '/' . $self->{ pm }->{ param }{ UPLOAD } . '/' . $path . $file;
 

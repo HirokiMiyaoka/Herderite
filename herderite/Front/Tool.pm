@@ -12,9 +12,9 @@ sub new
 	return bless ( { param => $param }, $package );
 }
 
-sub list{ return ''; }
+sub List{ return ''; }
 
-sub breadcrumbs
+sub Breadcrumbs
 {
 	my ( $self, $file ) = ( @_ );
 	my $path = $self->{ param }{ HOME };

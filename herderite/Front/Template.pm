@@ -11,38 +11,38 @@ sub new
 	return bless ( { param => $param, plugin => $plugin }, $package );
 }
 
-sub header
+sub Header
 {
 	my ( $self ) = ( @_ );
-	return '<a href="' . $self->{ param }{ HOME } . '" id="logo" title="Home"></a>';
+	return '<a href="' . $self->{ param }{ HOME } . '" id="logo" title="Home"><ul><li></li></ul></a>';
 }
 
-sub footer
+sub Footer
 {
 	my ( $self ) = ( @_ );
 	return $self->{ param }{ CPYRIGHT } . ' Powered by <a href="https://github.com/HirokiMiyaoka/Herderite" target="_blank" title="Herderite GithHub page.">Herderite</a>';
 }
 
-sub headmenu
+sub Headmenu
 {
 	my ( $self ) = ( @_ );
-	return '			<div id="head">' . $self->{ plugin }{ tool }->breadcrumbs( $self->{ param }{ file } ) . '</div>
+	return '			<div id="head">' . $self->{ plugin }{ tool }->Breadcrumbs( $self->{ param }{ file } ) . '</div>
 ';
 }
 
-sub footmenu
+sub Footmenu
 {
 	return '			<div id="foot"></div>
 ';
 }
 
-sub sidemenu
+sub Sidemenu
 {
 	my ( $self ) = ( @_ );
-	return '			<div id="side">' . $self->{ plugin }{ blog }->list( $self->{ param }{ Y }, $self->{ param }{ M }, $self->{ param }{ D } ) . '</div>';
+	return '			<div id="side">' . $self->{ plugin }{ blog }->List( $self->{ param }{ Y }, $self->{ param }{ M }, $self->{ param }{ D } ) . '</div>';
 }
 
-sub head
+sub Head
 {
 	my ( $self ) = ( @_ );
 
@@ -61,24 +61,26 @@ sub head
 </head>
 <body>
 	<div>
-		<header>' . $self->header() . '</header>
+		<header>' . $self->Header() . '<ul>
+		</ul></header>
 		<div>
 			<article>
-' . $self->headmenu();
+' . $self->HeadMenu();
 }
 
-sub foot
+sub Foot
 {
 	my ( $self ) = ( @_ );
 
-	return $self->footmenu() .
+	return $self->FootMenu() .
 		'			</article>
 ' .
-		$self->sidemenu() .
+		$self->SideMenu() .
 		'
 		</div>
-		<footer>' . $self->footer() . '</footer>
+		<footer>' . $self->Footer() . '</footer>
 	</div>
+	<script></script>
 </body>
 </html>';
 }

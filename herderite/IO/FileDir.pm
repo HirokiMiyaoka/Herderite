@@ -10,7 +10,7 @@ sub new
 	return bless ( { io => $io }, $package );
 }
 
-sub mdfoot()
+sub MDFoot()
 {
 	my ( $path ) = ( @_ );
 	my $html = '';
@@ -25,7 +25,7 @@ sub mdfoot()
 	return $html;
 }
 
-sub loadmarkdown()
+sub LoadMarkdown()
 {
 	my ( $self, $file, $plugin ) = ( @_ );
 
@@ -42,26 +42,26 @@ sub loadmarkdown()
 		{
 			while( <$fh> )
 			{
-				$md .= $plugin->mdplugin( $_ );
+				$md .= $plugin->MDPlugin( $_ );
 			}
 		} else
 		{
 			while( <$fh> ) { $md .= $_; }
 		}
-		if ( $self->{ io }->{ param }{ mddate } ){ $md .= &mdfoot( $file ); }
+		if ( $self->{ io }->{ param }{ mddate } ){ $md .= &MDFoot( $file ); }
 		close( $fh );
 	}
 
 	return ( $title, \$md );
 }
 
-sub savemarkdown()
+sub SaveMarkdown()
 {
 	my ( $self, $file, $md ) = ( @_ );
 
 	$file =~ /(.+)\/[^\/]+$/;
 	my $dir = $1;
-	$self->createrecdir( $dir );
+	$self->CreateRecDir( $dir );
 
 	if ( open( MD, "> " . $self->{ io }->{ param }{ PUBDIR } . '/' . $file ) )
 	{
@@ -70,7 +70,7 @@ sub savemarkdown()
 	}
 }
 
-sub loadfile()
+sub LoadFile()
 {
 	my ( $self, $file ) = ( @_ );
 	my $txt = '';
@@ -85,7 +85,7 @@ sub loadfile()
 	return \$txt;
 }
 
-sub createrecdir()
+sub CreateRecDir()
 {
 	my ( $self, $dir ) = ( @_, '' );
 
@@ -98,7 +98,7 @@ sub createrecdir()
 	}
 }
 
-sub checkfiledir()
+sub CheckFileDir()
 {
 	my ( $self, $file ) = ( @_ );
 	my $dir = '';
@@ -119,7 +119,7 @@ sub checkfiledir()
 	return ( $file, $dir );
 }
 
-sub getblogdir()
+sub GetBlogDir()
 {
 	my ( $self, $dir ) = ( @_, '' );
 	my @list;
@@ -133,7 +133,7 @@ sub getblogdir()
 	return \@list;
 }
 
-sub getdirlist()
+sub GetDirList()
 {
 	my ( $self, $dir ) = ( @_ );
 
@@ -162,7 +162,7 @@ sub getdirlist()
 	return [ ( sort{ $a cmp $b }( @dir ) ), ( sort{ $a cmp $b }( @file ) ) ];
 }
 
-sub getfilelist()
+sub GetFileList()
 {
 	my ( $self, $dir ) = ( @_ );
 

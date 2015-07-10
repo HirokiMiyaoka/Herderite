@@ -12,11 +12,11 @@ sub new
 	return bless ( { param => $param, io => $io }, $package );
 }
 
-sub out
+sub Out
 {
 	my ( $self, $file, $plugin ) = ( @_ );
 
-	my ( $title, $md ) = $self->{ io }->loadmarkdown( $file, $plugin );
+	my ( $title, $md ) = $self->{ io }->LoadMarkdown( $file, $plugin );
 
 	$title =~ s/^\#+ //;
 	$title =~ s/[\r\n]//g;
@@ -24,14 +24,14 @@ sub out
 	if ( $title ne '' ){ $title .= ' - '; }
 	$self->{ param }{ TITLE } = $title . $self->{ param }{ TITLE };
 
-	if ( $plugin ){ $plugin->beforemdparse( $md ); }
+	if ( $plugin ){ $plugin->BeforeMDParse( $md ); }
 
 	my $html = &markdown( ${ $md } );
 
 	return \$html;
 }
 
-sub outInMem
+sub OutInMem
 {
 	my ( $self, $md, $plugin ) = ( @_ );
 
@@ -40,7 +40,7 @@ sub outInMem
 		my @line = split( /\n/, ${ $md } );
 		foreach ( @line )
 		{
-			$_ = $plugin->mdplugin( $_ );
+			$_ = $plugin->MDPlugin( $_ );
 		}
 		my $html = &markdown( join( "\n", @line ) );
 		return \$html;

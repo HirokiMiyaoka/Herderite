@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl --
 
 use strict;
 use warnings;
@@ -13,7 +13,7 @@ sub Main
 {
 	my $front = new Front( &conf::param( {} ) );
 
-	$front->init();
+	$front->Init();
 
-	$front->out();
+	$front->Out();
 }

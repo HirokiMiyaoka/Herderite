@@ -10,15 +10,15 @@ sub new
 	return bless ( {}, $package );
 }
 
-sub init()
+sub Init()
 {
 	my ( $self, $pm ) = @_;
 	$self->{ pm } = $pm;
-	$pm->addmdplugin( "blog", $self );
-	$pm->addmdplugin( "blogimg", $self );
+	$pm->AddMDPlugin( "blog", $self );
+	$pm->AddMDPlugin( "blogimg", $self );
 }
 
-sub omit()
+sub Omit()
 {
 	my ( $text, $max ) = ( @_ );
 	my @line = split( /\n/, ${ $text }, $max + 1 );
@@ -26,17 +26,17 @@ sub omit()
 	return join( "\n", @line );
 }
 
-sub inline()
+sub Inline()
 {
 	my ( $self, @arg ) = ( @_ );
 
 	my $name = $self->{ pm }->{ name };
 	if ( $name eq 'blog' )
 	{
-		return $self->blog( @arg );
+		return $self->Blog( @arg );
 	} elsif ( $name eq 'blogimg' )
 	{
-		return $self->blogimg( @arg );
+		return $self->BlogImg( @arg );
 	}
 
 	return \( '' );
@@ -44,7 +44,7 @@ sub inline()
 
 ##########
 
-sub blog()
+sub Blog()
 {
 	my ( $self, $count ) = ( @_, 1 );
 
@@ -54,17 +54,17 @@ sub blog()
 	my ( $y, $m, $d );
 	my $ret = '';
 	my $max = 10;
-	foreach $y ( reverse( @{ $io->getblogdir() } ) )
+	foreach $y ( reverse( @{ $io->GetBlogDir() } ) )
 	{
-		foreach $m ( reverse( @{ $io->getblogdir( $y ) } ) )
+		foreach $m ( reverse( @{ $io->GetBlogDir( $y ) } ) )
 		{
-			foreach $d (reverse( @{ $io->getblogdir( $y . '/' . $m ) } ) )
+			foreach $d (reverse( @{ $io->GetBlogDir( $y . '/' . $m ) } ) )
 			{
 				my $tmp = $io->{ get }{ b };
 				$io->{ get }{ b } = $y . $m . $d;
-				my ( $title, $md ) = ( $io->loadmarkdown( $pr->{ BLOG } . '/' . $y . '/' . $m . '/' . $d, $self->{ pm } ) );
+				my ( $title, $md ) = ( $io->LoadMarkdown( $pr->{ BLOG } . '/' . $y . '/' . $m . '/' . $d, $self->{ pm } ) );
 				( $d ) = split( /\./, $d );
-				$ret .= "----\n" . &omit( $md, $max ) . '<div class="blogfoot"><a href="' . $pr->{ HOME } . '?b=' . $y . $m . $d . '">続きを読む</a></div>';
+				$ret .= "----\n" . &Omit( $md, $max ) . '<div class="blogfoot"><a href="' . $pr->{ HOME } . '?b=' . $y . $m . $d . '">続きを読む</a></div>';
 				$io->{ get }{ b } = $tmp;
 				if( --$count <= 0 ){ return \$ret; }
 			}
@@ -74,11 +74,11 @@ sub blog()
 	return \$ret;
 }
 
-sub blogimg()
+sub BlogImg()
 {
 	my ( $self, $file ) = ( @_ );
 
-	my ( $path, $d ) = $self->{ pm }->{ io }->getcurrentdir();
+	my ( $path, $d ) = $self->{ pm }->{ io }->GetCurrentDir();
 
 	$path = $self->{ pm }->{ param }{ ADDRESS } . '/' . $self->{ pm }->{ param }{ UPLOAD } . '/' . $path . '/' . $d . '/' . $file;
 

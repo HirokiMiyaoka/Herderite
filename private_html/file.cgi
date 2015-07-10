@@ -6,31 +6,31 @@ use warnings;
 use lib '../herderite';
 use conf;
 
-print &main();
+print &Main();
 
-sub main()
+sub Main()
 {
 	my %conf = %{ &conf::param( {} ) };
 	$conf{ DOCROOT } = $conf{ PUBDIR } . '/' . $conf{ UPLOAD } . '/';
-	my %data = &analysis();
+	my %data = &Analysis();
 
 	if ( $data{ mode } eq 'remove' )
 	{
-		return &remove( $conf{ DOCROOT } . $data{ path }, $conf{ ADDRESS } );
+		return &Remove( $conf{ DOCROOT } . $data{ path }, $conf{ ADDRESS } );
 	}
 	my $pubpath = $conf{ ADDRESS } . '/' . $conf{ UPLOAD } . '/';
 
-	return &list( $conf{ DOCROOT }, $data{ path }, $pubpath );
+	return &List( $conf{ DOCROOT }, $data{ path }, $pubpath );
 }
 
-sub remove()
+sub Remove()
 {
 	my ( $file, $ad  ) = ( @_ );
 	if ( -f $file ){ unlink( $file ); }
 	return 'Location: ' . ( $ENV{ HTTP_REFERER } || $ad ) . "\n\n";
 }
 
-sub list()
+sub List()
 {
 	my ( $doc, $path, $pubpath ) = ( @_ );
 
@@ -49,16 +49,16 @@ sub list()
 		}
 	}
 
-	return &html( \$html );
+	return &Html( \$html );
 }
 
-sub html()
+sub Html()
 {
 	my $html = ${ $_[ 0 ] };
 	return "Content-Length: " . length( $html ) . "\n\n" . $html;
 }
 
-sub analysis()
+sub Analysis()
 {
 	my %data = %{ &CommonDecode( \( $ENV{ 'QUERY_STRING' } || '' ) ) };
 	unless ( exists( $data{ path } ) ){ $data{ path } = ''; }

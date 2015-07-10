@@ -19,25 +19,25 @@ sub new
 	return bless ( { param => $param }, $package );
 }
 
-sub init
+sub Init
 {
 	my ( $self ) = ( @_ );
 	$self->{ io } = new HerderiteIO( $self->{ param } );
-	$self->{ io }->getdevice();
-	$self->{ io }->decode();
+	$self->{ io }->GetDevice();
+	$self->{ io }->Decode();
 	$self->{ plugin } = {
 		management => new Manaegment( $self->{ param }, $self->{ io } ),
 		tool => new Tool( $self->{ param }, $self->{ io } ),
 	};
-	$self->{ plugin }{ management }->loadplugin();
+	$self->{ plugin }{ management }->LoadPlugin();
 	$self->{ param }{ mddate } = 1;
 }
 
-sub out
+sub Out
 {
 	my ( $self ) = ( @_ );
 
-	my ( $file, $dir ) = $self->{ io }->checkfiledir( $self->{ io }->getfilename() );
+	my ( $file, $dir ) = $self->{ io }->CheckFileDir( $self->{ io }->GetFileName() );
 
 	$self->{ param }{ file } = $file;
 
@@ -45,18 +45,18 @@ sub out
 
 	if ( $file ne '' )
 	{
-		$out = ${ $self->outhtml() };
+		$out = ${ $self->OutHtml() };
 	} elsif( $self->{ param }{ DIRLIST } && $dir ne '' )
 	{
-		$out = ${ $self->dirlist( $dir ) };
+		$out = ${ $self->DirList( $dir ) };
 	} else
 	{
-		$out = ${ $self->error( 404 ) };
+		$out = ${ $self->Error( 404 ) };
 	}
 
 	if ( exists( $self->{ param }{ redirect } ) )
 	{
-		$self->redirect( $self->{ param }{ redirect } );
+		$self->Redirect( $self->{ param }{ redirect } );
 		return ;
 	}
 
@@ -67,14 +67,14 @@ sub out
 	print $out;
 }
 
-sub redirect()
+sub Redirect()
 {
 	my ( $self, $path ) = ( @_ );
 	print 'Location:' . ( $self->{ param }{ ADDRESS } . $path ) . "\n\n";
 	exit( 0 );
 }
 
-sub error
+sub Error
 {
 	my ( $self, $code ) = ( @_ );
 
@@ -82,25 +82,25 @@ sub error
 
 	$self->{ param }{ TITLE } = 'Error - ' . $code;
 	my $tmplate = new Template( $self->{ param }, $self->{ plugin } );
-	return \( $tmplate->head() . $code . $tmplate->foot() );
+	return \( $tmplate->Head() . $code . $tmplate->Foot() );
 }
 
-sub dirlist
+sub DirList
 {
 	my ( $self, $dir ) = ( @_ );
 
 	$self->{ plugin }{ blog } = new Blog( $self->{ param }, $self->{ io } );
 
-	$dir = $self->{ io }->getdirpath( $dir );
+	$dir = $self->{ io }->GetDirPath( $dir );
 
 	my $path = $self->{ param }{ HOME } . '?f=';
 	my $basedir = $self->{ param }{ PUBDIR } . '/' . $dir;
 
-	my @list = @{ $self->{ io }->getdirlist( $dir ) };
+	my @list = @{ $self->{ io }->GetDirList( $dir ) };
 
 	my $content = '<h1>' . $dir . '</h1>' . '<ul>';
 
-	my $parent = $self->{ io }->getparentdirpath( $dir );
+	my $parent = $self->{ io }->GetParentDirPath( $dir );
 
 	my $bdir = $self->{ param }{ BLOG };
 	if ( $dir =~ /^$bdir\/(.+)$/ )
@@ -147,10 +147,10 @@ sub dirlist
 
 	my $tmplate = new Template( $self->{ param }, $self->{ plugin } );
 
-	return \( $tmplate->head() . $content . $tmplate->foot() );
+	return \( $tmplate->Head() . $content . $tmplate->Foot() );
 }
 
-sub outhtml
+sub OutHtml
 {
 	my ( $self ) = ( @_ );
 
@@ -161,14 +161,14 @@ sub outhtml
 	if ( -f $self->{ param }{ file } )
 	{
 		my $md = new Markdown( $self->{ param }, $self->{ io } );
-		$content = ${ $md->out( $self->{ param }{ file }, $self->{ plugin }{ management } ) };
+		$content = ${ $md->Out( $self->{ param }{ file }, $self->{ plugin }{ management } ) };
 	}
 
-	$self->{ plugin }{ management }->aftermdparse( \$content );
+	$self->{ plugin }{ management }->AfterMDParse( \$content );
 
 	my $tmplate = new Template( $self->{ param }, $self->{ plugin } );
 
-	return \( $tmplate->head() . $content . $tmplate->foot() );
+	return \( $tmplate->Head() . $content . $tmplate->Foot() );
 }
 
 1;

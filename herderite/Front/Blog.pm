@@ -9,12 +9,12 @@ sub new
 	return bless ( { param => $param, io => $io }, $package );
 }
 
-sub list
+sub List
 {
 	my ( $self, $y, $m, $d ) = ( @_ );
 
 	my $out = '';
-	my @y = reverse( @{ $self->{ io }->getblogdir() } );
+	my @y = reverse( @{ $self->{ io }->GetBlogDir() } );
 
 	$out = '<h2><a href="' . $self->{ param }{ HOME } . '?b=blog">Blog</a></h2><ul>';
 	foreach ( @y )
@@ -22,14 +22,14 @@ sub list
 		if ( $_ eq $y )
 		{
 			$out .= '<li>' . $_;
-			my @m = reverse( @{ $self->{ io }->getblogdir( $y ) } );
+			my @m = reverse( @{ $self->{ io }->GetBlogDir( $y ) } );
 			$out .= '<ul>';
 			foreach ( @m )
 			{
 				if ( $_ eq $m )
 				{
 					$out .= '<li>' . $_;
-					my @d = reverse( @{ $self->{ io }->getblogdir( $y . '/' . $m ) } );
+					my @d = reverse( @{ $self->{ io }->GetBlogDir( $y . '/' . $m ) } );
 					$out .= '<ul>';
 					foreach ( @d )
 					{

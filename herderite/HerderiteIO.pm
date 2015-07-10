@@ -11,18 +11,18 @@ sub new
 
 	my $obj =  bless ( { param => $param }, $package );
 
-	$obj->readmode();
+	$obj->ReadMode();
 	$obj->{ filedir } = new FileDir( $obj );
 
 	return $obj;
 }
 
-sub getdevice
+sub GetDevice
 {
 	return $ENV{ 'HTTP_USER_AGENT' } || '';
 }
 
-sub decode()
+sub Decode()
 {
 	my ( $self ) = ( @_ );
 
@@ -74,45 +74,45 @@ sub CommonDecode
 	return \%ret;
 }
 
-sub writemode()
+sub WriteMode()
 {
 	my ( $self ) = ( @_ );
 	$self->{ param }{ mode } = 1;
 }
 
-sub readmode()
+sub ReadMode()
 {
 	my ( $self ) = ( @_ );
 	$self->{ param }{ mode } = 0;
 }
 
-sub loadmarkdown()
+sub LoadMarkdown()
 {
 	my ( $self, $file, $plugin ) = ( @_ );
-	return $self->{ filedir }->loadmarkdown( $file, $plugin );
+	return $self->{ filedir }->LoadMarkdown( $file, $plugin );
 }
 
-sub savemarkdown()
+sub SaveMarkdown()
 {
 	my ( $self, $file, $md ) = ( @_ );
-	return $self->{ filedir }->savemarkdown( $file, $md );
+	return $self->{ filedir }->SaveMarkdown( $file, $md );
 }
 
-sub loadfile()
+sub LoadFile()
 {
 	my ( $self, $file ) = ( @_ );
-	return $self->{ filedir }->loadfile();
+	return $self->{ filedir }->LoadFile();
 }
 
-sub getcurrentdir()
+sub GetCurrentDir()
 {
 	my ( $self ) = ( @_ );
-	my @e = split( /\//, $self->getfilename() );
+	my @e = split( /\//, $self->GetFileName() );
 	my $f = pop( @e );
 	return ( join( '/', @e ), $f );
 }
 
-sub getfilename()
+sub GetFileName()
 {
 	my ( $self ) = ( @_ );
 	my $file = $self->{ get }{ f };
@@ -155,13 +155,13 @@ sub getfilename()
 	return $file || $self->{ param }{ DEF };
 }
 
-sub checkfiledir()
+sub CheckFileDir()
 {
 	my ( $self, $file ) = ( @_ );
-	return $self->{ filedir }->checkfiledir( $file );
+	return $self->{ filedir }->CheckFileDir( $file );
 }
 
-sub getdirpath()
+sub GetDirPath()
 {
 	my ( $self, $dir ) = ( @_ );
 	$dir =~ s/\/{2,}/\//g;
@@ -169,29 +169,29 @@ sub getdirpath()
 	return $dir;
 }
 
-sub getparentdirpath()
+sub GetParentDirPath()
 {
 	my ( $self, $dir ) = ( @_ );
 	$dir =~ /^(.+\/)(?:[^\/]+\/)$/;
 	return $1 || '';
 }
 
-sub getblogdir()
+sub GetBlogDir()
 {
 	my ( $self, $dir ) = ( @_, '' );
-	return $self->{ filedir }->getblogdir( $dir );
+	return $self->{ filedir }->GetBlogDir( $dir );
 }
 
-sub getdirlist()
+sub GetDirList()
 {
 	my ( $self, $dir ) = ( @_ );
-	return $self->{ filedir }->getdirlist( $dir );
+	return $self->{ filedir }->GetDirList( $dir );
 }
 
-sub getfilelist()
+sub GetFileList()
 {
 	my ( $self, $dir ) = ( @_ );
-	return $self->{ filedir }->getfilelist( $dir );
+	return $self->{ filedir }->GetFileList( $dir );
 }
 
 1;

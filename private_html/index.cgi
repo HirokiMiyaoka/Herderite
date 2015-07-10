@@ -13,10 +13,10 @@ sub Main
 {
 	my $front = new AdFront( &conf::param( {} ) );
 
-	$front->init();
+	$front->Init();
 
 	$front->{ param }{ MAINCSS } = $front->{ param }{ ADDRESS } . '/' . $front->{ param }{ MAINCSS };
 	$front->{ param }{ MDCSS } = $front->{ param }{ ADDRESS } . '/' . $front->{ param }{ MDCSS };
 
-	$front->out();
+	$front->Out();
 }

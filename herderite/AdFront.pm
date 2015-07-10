@@ -15,11 +15,11 @@ sub new
 	return bless ( { param => $param }, $package );
 }
 
-sub init()
+sub Init()
 {
 	my ( $self ) = ( @_ );
 
-    $self->SUPER::init();
+    $self->SUPER::Init();
 	$self->{ param }{ mddate } = 0;
 
 	unless ( exists( $self->{ io }->{ post }{ text } ) ){ $self->{ io }->{ post }{ text } = ''; }
@@ -28,10 +28,10 @@ sub init()
 	$uri =~ /([^\/]+)(?:\?.+)$/;
 	$self->{ param }{ script } = $1 || './';
 
-	$self->{ io }->writemode();
+	$self->{ io }->WriteMode();
 }
 
-sub error
+sub Error
 {
 	my ( $self, $code ) = ( @_ );
 
@@ -40,20 +40,20 @@ sub error
 		$self->{ param }{ blog } = $self->{ plugin }{ tool };
 		$self->{ param }{ TITLE } = 'Error - ' . $code;
 		my $tmplate = new Template( $self->{ param }, $self->{ plugin } );
-		return \( $tmplate->head() . $code . $tmplate->foot() );
+		return \( $tmplate->Head() . $code . $tmplate->Foot() );
 	}
 
 	$self->{ param }{ file } = $self->{ io }->{ get }{ f } . '.md';
-	return $self->outhtml();
+	return $self->OutHtml();
 }
 
-sub dirlist
+sub DirList
 {
 	my ( $self, $dir ) = ( @_ );
 
 	$self->{ plugin }{ blog } = new Blog( $self->{ param }, $self->{ io } );
 
-	$dir = $self->{ io }->getdirpath( $dir );
+	$dir = $self->{ io }->GetDirPath( $dir );
 
 	my $path = $self->{ param }{ HOME } . '?f=';
 	my $basedir = $self->{ param }{ PUBDIR } . '/' . $dir;
@@ -63,11 +63,11 @@ sub dirlist
 		mkdir( $basedir . $self->{ io }->{ post }{ d }, 0705 ); #TODO: moev FileIO
 	}
 
-	my @list = @{ $self->{ io }->getdirlist( $dir ) };
+	my @list = @{ $self->{ io }->GetDirList( $dir ) };
 
 	my $content = '<h1>' . $dir . '</h1><ul>';
 
-	my $parent = $self->{ io }->getparentdirpath( $dir );
+	my $parent = $self->{ io }->GetParentDirPath( $dir );
 	if ( $parent ne '' || $dir ne './' )
 	{
 		$content .= '<li><a href="' . $path . ( $parent eq '' ? '.' : uri_escape_utf8( $parent )) . '">' . '../' . '</a></li>';
@@ -97,7 +97,7 @@ sub dirlist
 		'" /><input type="submit" value="Blog post" /></form>';
 	} else{ $newblog = ''; }
 
-	return \( $tmplate->head() .
+	return \( $tmplate->Head() .
 	'<div style="height:1em;">' .
 	$newblog .
 	'<form style="float:right;margin:5px;" action="' .
@@ -106,10 +106,10 @@ sub dirlist
 	'<form style="float:right;margin:5px;" action="' .
 	$self->{ param }{ script } . '?' . ( $ENV{ 'QUERY_STRING' } || '' ) .
 	'" method="get"><input type="text" name="f" /><input type="submit" value="Create page" /></form></div>' .
-	$content . $tmplate->foot() );
+	$content . $tmplate->Foot() );
 }
 
-sub outhtml
+sub OutHtml
 {
 	my ( $self ) = ( @_ );
 
@@ -124,11 +124,11 @@ sub outhtml
 	if ( $self->{ io }->{ post }{ text } ne '' )
 	{
 		( $title ) = split( /\n/, $self->{ io }->{ post }{ text }, 2 );
-		$content = ${ $md->outInMem( \$self->{ io }->{ post }{ text }, $self->{ plugin }{ management } ) };
+		$content = ${ $md->OutInMem( \$self->{ io }->{ post }{ text }, $self->{ plugin }{ management } ) };
 
 		if ( exists( $self->{ io }->{ post }{ post } ) )
 		{
-			$self->{ io }->savemarkdown( $self->{ param }{ file }, \$self->{ io }->{ post }{ text } );
+			$self->{ io }->SaveMarkdown( $self->{ param }{ file }, \$self->{ io }->{ post }{ text } );
 			# TODO: write check.
 			my $tmp = $self->{ io }->{ post }{ text };
 			$mdtxt = \$tmp;
@@ -139,8 +139,8 @@ sub outhtml
 
 	} else
 	{
-		( $title, $mdtxt ) = $self->{ io }->loadmarkdown( $self->{ param }{ file } );
-		$content = ${ $md->outInMem( $mdtxt, $self->{ plugin }{ management } ) };
+		( $title, $mdtxt ) = $self->{ io }->LoadMarkdown( $self->{ param }{ file } );
+		$content = ${ $md->OutInMem( $mdtxt, $self->{ plugin }{ management } ) };
 	}
 
 	$title =~ s/^\#+ //;
@@ -164,10 +164,10 @@ firstScript.parentNode.insertBefore( script, firstScript );
 Load();
 window.onload = function () {Init()};';
 
-	return \( $tmplate->head() . $self->form( \($self->{ io }->{ post }{ text } || ${ $mdtxt } ) ) . $content . $tmplate->foot() );
+	return \( $tmplate->Head() . $self->Form( \($self->{ io }->{ post }{ text } || ${ $mdtxt } ) ) . $content . $tmplate->Foot() );
 }
 
-sub form()
+sub Form()
 {
 	my ( $self, $md ) = ( @_ );
 	return '<form style="margin:0.5em 0px;" required="required" action="' .
@@ -176,22 +176,22 @@ sub form()
 	'</textarea>' .
 	'<input type="submit" name="preview" value="Preview" />' .
 	($self->{ io }->{ post }{ text } eq '' ? '' : '<input type="submit" name="post" value="Post" />') .
-	'</form>' . ${ $self->uploadform() } .
+	'</form>' . ${ $self->UploadForm() } .
 	'<div id="dragupload">Drag upload</div>' .
 	'<hr />';
 }
 
-sub uploadform()
+sub UploadForm()
 {
 	my ( $self ) = ( @_ );
-	my ( $path, $f ) = $self->{ io }->getcurrentdir();
+	my ( $path, $f ) = $self->{ io }->GetCurrentDir();
 	my $base = $self->{ param }{ UPLOAD } . '/';
 	if ( $f ne $self->{ param }{ DEF } )
 	{
 		$path .= '/' . $f . '/';
 	}
 
-	my @files = @{ $self->{ io }->getfilelist( $base . $path ) };
+	my @files = @{ $self->{ io }->GetFileList( $base . $path ) };
 
 	my $html = '';
 
@@ -213,7 +213,7 @@ sub uploadform()
 	return \$html;
 }
 
-sub redirect()
+sub Redirect()
 {
 	my ( $self, $path ) = ( @_ );
 	print 'Location: ' . ( $self->{ param }{ PRIVATE } . $path ) . "\n\n";
