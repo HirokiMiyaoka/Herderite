@@ -6,6 +6,8 @@
 cpan Text::Markdown
 cpan Text::Markdown::Hoedown
 cpan URI::Escape
+cpan DBD::SQLite
+cpan DBI
 ```
 
 ## Install example
