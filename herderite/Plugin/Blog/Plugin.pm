@@ -22,8 +22,9 @@ sub Omit()
 {
 	my ( $text, $max ) = ( @_ );
 	my @line = split( /\n/, ${ $text }, $max + 1 );
-	if ( $max <= scalar( @line ) ){ pop( @line ); }
-	return join( "\n", @line );
+	my $cut = 0;
+	if ( $max <= scalar( @line ) ){ pop( @line ); $cut = 1; }
+	return join( "\n", @line ) . ( $cut ? '<p>...</p>' : '' );
 }
 
 sub Inline()
@@ -46,7 +47,7 @@ sub Inline()
 
 sub Blog()
 {
-	my ( $self, $count ) = ( @_, 1 );
+	my ( $self, $count ) = ( @_, 3 );
 
 	my $io = $self->{ pm }->{ io };
 	my $pr = $self->{ pm }->{ param };
@@ -64,7 +65,7 @@ sub Blog()
 				$io->{ get }{ b } = $y . $m . $d;
 				my ( $title, $md ) = ( $io->LoadMarkdown( $pr->{ BLOG } . '/' . $y . '/' . $m . '/' . $d, $self->{ pm } ) );
 				( $d ) = split( /\./, $d );
-				$ret .= "----\n" . &Omit( $md, $max ) . '<p>...</p><div class="blogfoot"><a href="' . $pr->{ HOME } . '?b=' . $y . $m . $d . '">続きを読む</a></div>';
+				$ret .= "----\n" . &Omit( $md, $max ) . '<div class="blogfoot"><a href="' . $pr->{ HOME } . '?b=' . $y . $m . $d . '">More</a></div>';
 				$io->{ get }{ b } = $tmp;
 				if( --$count <= 0 ){ return \$ret; }
 			}
