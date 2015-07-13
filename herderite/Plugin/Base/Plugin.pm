@@ -48,9 +48,11 @@ sub Img()
 {
 	my ( $self, $file ) = ( @_ );
 
-	my ( $path ) = $self->{ pm }->{ io }->GetCurrentDir();
+	my ( $path ) = $self->{ pm }->{ io }->GetFileName();
 
-	$path = $self->{ pm }->{ param }{ ADDRESS } . '/' . $self->{ pm }->{ param }{ UPLOAD } . '/' . $path . $file;
+	if ( $path =~ /\/index$/ || $path eq 'index' ){ ( $path ) = $self->{ pm }->{ io }->GetCurrentDir(); }
+
+	$path = $self->{ pm }->{ param }{ ADDRESS } . '/' . $self->{ pm }->{ param }{ UPLOAD } . '/' . $path . '/' . $file;
 
 	$path = '<img src="' . $path . '" />';
 
