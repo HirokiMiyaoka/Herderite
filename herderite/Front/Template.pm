@@ -50,7 +50,7 @@ sub Head
 <html lang="ja">
 <head>
 	<meta charset="utf-8" />
-	<meta name="viewport" content="width=640,user-scalable=yes" />
+	<script type="text/javascript">ismobile=(function IsMobile(){var ua=window.navigator.userAgent.toLowerCase();return ((ua.indexOf("android")>0&&ua.indexOf("Mobile")>0)||ua.indexOf("ipod")>0||ua.indexOf("iphone")>0||ua.indexOf("mobile")>0);})();if(ismobile){document.write("<meta name=\"viewport\" content=\"width=640\" />");}</script>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<link rel="icon" href="favicon.ico" />
 	<link rel="stylesheet" href="' . $self->{ param }{ MAINCSS } . '" type="text/css" />
@@ -80,7 +80,7 @@ sub Foot
 		</div>
 		<footer>' . $self->Footer() . '</footer>
 	</div>
-	<script></script>
+	<script>if(ismobile){(document.getElementsByTagName("body"))[0].classList.add("sp");}</script>
 </body>
 </html>';
 }

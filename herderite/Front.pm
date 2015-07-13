@@ -183,13 +183,7 @@ sub CategoryList()
 		{
 			$a = $v;
 		}
-		if ( $_ =~ /^$bhead\/(\d{4})\/(\d{2})\/(\d{2})/ )
-		{
-			$content .= '<li><a href="?b=' . $1 . $2 . $3 . '">' . $1 . '/' . $2 . '/' . $3 . '</a></li>';
-		} else
-		{
-			$content .= '<li><a href="?f=' . $a . '">' . $v . '</a></li>';
-		}
+		$content .= '<li><a href="?f=' . $a . '">' . $v . '</a></li>';
 	}
 
 	$content .= '</ul>';
