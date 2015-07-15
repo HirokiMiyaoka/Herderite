@@ -10,17 +10,22 @@ sub new
 	return bless ( { io => $io }, $package );
 }
 
+sub MDHead()
+{
+	my ( $Y, $M, $D ) = ( @_ );
+	return '<div class="date"><span>' . $Y . '</span><b>' . $M . '/' . $D . '</b></div>';
+}
+
 sub MDFoot()
 {
-	my ( $path ) = ( @_ );
+	my ( $path, $Y, $M, $D, $h, $m, $s ) = ( @_ );
 	my $html = '';
 	$html .= '<div class="mdfoot">';
 	if ( $path =~ /\/([0-9]+)\/([0-9]+)\/([0-9]+)\.md$/ )
 	{
 		$html .= '<div>Posted:' . $1 . '/' . $2 . '/' . $3 . '</div>';
 	}
-	my ( $s, $m, $h, $D, $M, $Y ) = localtime( (stat( $path ))[ 9 ] );
-	$html .= '<div>Update:' . ( $Y + 1900 ) . '/' . ( $M + 1 ) . '/' . $D . ' ' . $h . ':' . $m . ':' . $s . '</div>';
+	$html .= '<div>Update:' . $Y . '/' . $M . '/' . $D . ' ' . $h . ':' . $m . ':' . $s . '</div>';
 	$html .= '</div>';
 	return $html;
 }
@@ -30,6 +35,17 @@ sub LoadMarkdown()
 	my ( $self, $file, $plugin ) = ( @_ );
 
 	my $title = '';
+
+	my ( $s, $m, $h, $D, $M, $Y ) = localtime( (stat( $file ))[ 9 ] );
+	$Y += 1900;
+	++$M;
+
+	my ( $Y_, $M_, $D_ ) = ( $Y, $M, $D );
+	if ( $file =~ /\/([0-9]+)\/([0-9]+)\/([0-9]+)\.md$/ )
+	{
+		( $Y_, $M_, $D_ ) = ( $1, $2, $3 );
+	}
+
 	my $md = '';
 
 	my $fh;
@@ -37,6 +53,7 @@ sub LoadMarkdown()
 	if ( open( $fh, "< " . $file ) )
 	{
 		$title = <$fh>;
+		if ( $self->{ io }->{ param }{ mddate } && $title =~ /^#/ ){ $md .= &MDHead( $Y_, $M_, $D_ ); }
 		$md .= $title;
 		if ( $plugin )
 		{
@@ -48,7 +65,7 @@ sub LoadMarkdown()
 		{
 			while( <$fh> ) { $md .= $_; }
 		}
-		if ( $self->{ io }->{ param }{ mddate } ){ $md .= &MDFoot( $file ); }
+		if ( $self->{ io }->{ param }{ mddate } ){ $md .= &MDFoot( $file, $Y, $M, $D, $h, $m, $s ); }
 		close( $fh );
 	}
 

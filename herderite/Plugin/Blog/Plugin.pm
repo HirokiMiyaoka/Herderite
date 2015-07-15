@@ -23,7 +23,7 @@ sub Omit()
 	my ( $text, $max ) = ( @_ );
 	my @line = split( /\n/, ${ $text }, $max + 1 );
 	my $cut = 0;
-	if ( $max <= scalar( @line ) ){ pop( @line ); $cut = 1; }
+	if ( $max <= scalar( @line ) ){ if( pop( @line ) ne '' ){ $cut = 1; } }
 	return join( "\n", @line ) . ( $cut ? '<p>...</p>' : '' );
 }
 

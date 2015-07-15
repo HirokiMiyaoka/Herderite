@@ -145,6 +145,7 @@ sub OutHtml
 
 	$title =~ s/^\#+ //;
 	$title =~ s/[\r\n]//g;
+	$title =~ s/\<.+\>(.+)\<\/.+\>/$1/g;
 	#$title =~ s/([^\\s]+)/$1/;
 	if ( $title ne '' ){ $title .= ' - '; }
 
@@ -170,6 +171,7 @@ window.onload = function () {Init()};';
 sub Form()
 {
 	my ( $self, $md ) = ( @_ );
+	if ( ${ $md } eq '' ) { ${ $md } = "# Title\n\n{{category}}"; }
 	return '<form style="margin:0.5em 0px;" required="required" action="' .
 	$self->{ param }{ script } . '?' . ( $ENV{ 'QUERY_STRING' } || '' ) .
 	'" method="post"><textarea style="width:98%;height:200px;margin:10px auto;display:block;" name="text" autofocus="autofocus">' . ${ $md } .

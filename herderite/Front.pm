@@ -183,7 +183,13 @@ sub CategoryList()
 		{
 			$a = $v;
 		}
-		$content .= '<li><a href="?f=' . $a . '">' . $v . '</a></li>';
+		if ( $_ =~ /^$bhead\/(\d{4})\/(\d{2})\/(\d{2})/ )
+		{
+			$content .= '<li><a href="?b=' . $1 . $2 . $3 . '">' . $1 . '/' . $2 . '/' . $3 . '</a></li>';
+		} else
+		{
+			$content .= '<li><a href="?f=' . $a . '">' . $v . '</a></li>';
+		}
 	}
 
 	$content .= '</ul>';
@@ -208,6 +214,7 @@ sub OutHtml
 
 	$self->{ plugin }{ management }->AfterMDParse( \$content );
 
+	$self->{ param }{ TITLE } =~ s/\<.+\>(.+)\<\/.+\>/$1/g;
 	my $tmplate = new Template( $self->{ param }, $self->{ plugin } );
 
 	return \( $tmplate->Head() . $content . $tmplate->Foot() );
