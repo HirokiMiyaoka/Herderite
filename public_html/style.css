@@ -102,6 +102,7 @@ div.date > b {
 	display: block;
 	text-align: center;
 	font-size: 15px;
+	letter-spacing: -1px;
 }
 
 article > h1 {

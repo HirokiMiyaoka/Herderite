@@ -126,7 +126,8 @@ sub GetCurrentDir()
 
 sub GetFileName()
 {
-	my ( $self ) = ( @_ );
+	my ( $self, $update ) = ( @_, 0 );
+
 	my $file = $self->{ get }{ f };
 
 	if ( $self->{ get }{ b } ne '' )
@@ -148,10 +149,13 @@ sub GetFileName()
 		{
 			$file = $self->{ param }{ BLOG };
 		}
-		$self->{ param }{ D } = $d;
-		$self->{ param }{ M } = $m;
-		$self->{ param }{ Y } = $y;
-	} else
+		if ( $update )
+		{
+			$self->{ param }{ D } = $d;
+			$self->{ param }{ M } = $m;
+			$self->{ param }{ Y } = $y;
+		}
+	} elsif ( $update )
 	{
 		my ( @time ) = localtime( time() );
 		$self->{ param }{ D } = '00';#sprintf( "%02d", $time[ 3 ] );

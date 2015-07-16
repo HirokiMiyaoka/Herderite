@@ -37,7 +37,7 @@ sub Out
 {
 	my ( $self ) = ( @_ );
 
-	my ( $file, $dir ) = $self->{ io }->CheckFileDir( $self->{ io }->GetFileName() );
+	my ( $file, $dir ) = $self->{ io }->CheckFileDir( $self->{ io }->GetFileName( 1 ) );
 
 	$self->{ param }{ file } = $file;
 
